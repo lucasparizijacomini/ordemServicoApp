@@ -1,0 +1,7 @@
+{
+  "name": "ordemServicoApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
