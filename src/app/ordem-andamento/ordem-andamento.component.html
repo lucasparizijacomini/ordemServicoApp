@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Ordens em Andamento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list *ngIf="ordens.length > 0">
+
+    <ion-card *ngFor="let os of ordens">
+      <ion-card-header>
+        <ion-card-title>
+          {{ os.modelo }} - {{ os.frota }}
+        </ion-card-title>
+        <ion-card-subtitle>
+          Hodômetro: {{ os.hodometro }}
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <p><strong>Local:</strong> {{ os.local }}</p>
+        <p><strong>Tipo de Manutenção:</strong>
+          {{ os.tipoManutencao == '1' ? 'Corretiva' : 'Preventiva' }}
+        </p>
+
+        <div *ngIf="os.fotoUrl" class="img-wrapper">
+          <img [src]="os.fotoUrl" />
+        </div>
+
+        <ion-button
+          expand="block"
+          color="success"
+          (click)="executarOS(os)"
+        >
+          Executar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </ion-list>
+
+  <div *ngIf="ordens.length === 0" class="empty">
+    <p>Nenhuma Ordem em andamento.</p>
+  </div>
+
+</ion-content>

@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Início</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Início</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="container">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6" size-lg="4">
+          <ion-card button="true" (click)="navegarParaOrdens()">
+            <ion-card-content class="card-content">
+              <ion-icon name="construct-outline" color="primary"></ion-icon>
+              <ion-card-title>Ordens</ion-card-title>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6" size-lg="4">
+          <ion-card button="true" (click)="navegarParaServicosAndamento()">
+            <ion-card-content class="card-content">
+              <ion-icon name="play-circle-outline" color="primary"></ion-icon>
+              <ion-card-title>Serviços em Andamento</ion-card-title>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6" size-lg="4">
+          <ion-card button="true" (click)="navegarParaCriarOrdem()">
+            <ion-card-content class="card-content">
+              <ion-icon name="create-outline" color="primary"></ion-icon>
+              <ion-card-title>Criar Ordem</ion-card-title>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

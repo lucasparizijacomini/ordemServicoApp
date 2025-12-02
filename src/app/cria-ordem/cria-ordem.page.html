@@ -1,0 +1,122 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Criar Ordem de Serviço</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <form>
+      <!-- Modelo -->
+      <ion-item>
+        <ion-input
+          label="Modelo"
+          labelPlacement="stacked"
+          placeholder="Ex: 92UK"
+          [(ngModel)]="ordem.modelo"
+          name="modelo">
+        </ion-input>
+      </ion-item>
+
+      <!-- Fora -->
+      <ion-item>
+        <ion-input
+          label="Frota"
+          labelPlacement="stacked"
+          placeholder="Ex: 3030"
+          [(ngModel)]="ordem.frota"
+          name="frota">
+        </ion-input>
+      </ion-item>
+
+      <!-- Hodometro -->
+      <ion-item>
+        <ion-input
+          label="Hodrometro"
+          labelPlacement="stacked"
+          placeholder="Insira a distancia total"
+          [(ngModel)]="ordem.hodometro"
+          name="etiqueta">
+        </ion-input>
+      </ion-item>
+
+      <!-- Local -->
+      <ion-item>
+        <ion-input
+          label="Local"
+          labelPlacement="stacked"
+          placeholder="Local"
+          [(ngModel)]="ordem.local"
+          name="local">
+        </ion-input>
+      </ion-item>
+
+      <!-- Tipo Montagem -->
+      <ion-item>
+        <ion-select
+          label="Tipo Manutenção"
+          labelPlacement="stacked"
+          placeholder="Selecione"
+          [(ngModel)]="ordem.tipoManutencao"
+          name="tipoManutencao">
+          <ion-select-option value="1">Corretiva</ion-select-option>
+          <ion-select-option value="2">Preventiva</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Foto -->
+      <div class="foto-section">
+        <ion-label class="section-label">Foto</ion-label>
+        <div class="foto-container">
+          <div class="foto-placeholder" (click)="tirarFoto()">
+            <ion-icon *ngIf="!ordem.fotoUrl" name="camera-outline"></ion-icon>
+            <img *ngIf="ordem.fotoUrl" [src]="ordem.fotoUrl" alt="Foto">
+          </div>
+        </div>
+      </div>
+
+      <div class="problemas-section">
+      <ion-label class="section-label">Problemas</ion-label>
+
+      <ion-button expand="block" (click)="openModalProblema()">
+        Adicionar Problema
+      </ion-button>
+
+
+      <ion-list>
+        <ion-item-divider>
+          <ion-label>Atividades</ion-label>
+        </ion-item-divider>
+
+        <ion-card *ngFor="let p of ordem.problemas; let i = index">
+          <ion-card-header>
+            <ion-card-title>{{ p.tipo }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p><strong>Situação:</strong> {{ p.situacao }}</p>
+            <p><strong>Observação:</strong> {{ p.observacao }}</p>
+
+            <ion-button
+              expand="block"
+              color="danger"
+              (click)="removerProblema(i)"
+            >
+              Remover
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-list>
+
+      <ion-button expand="block" (click)="finalizarOS()">
+        Abrir OS
+      </ion-button>
+
+    </div>
+
+    </form>
+  </div>
+</ion-content>

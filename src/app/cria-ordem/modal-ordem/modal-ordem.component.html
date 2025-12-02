@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Adicionar Problema</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Fechar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-item>
+    <ion-input
+      label="Tipo"
+      labelPlacement="stacked"
+      [(ngModel)]="problema.tipo">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      label="Situação"
+      labelPlacement="stacked"
+      [(ngModel)]="problema.situacao">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-textarea
+      label="Observação"
+      labelPlacement="stacked"
+      [(ngModel)]="problema.observacao">
+    </ion-textarea>
+  </ion-item>
+
+  <ion-button expand="block" (click)="salvar()">
+    Salvar
+  </ion-button>
+
+</ion-content>
