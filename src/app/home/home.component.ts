@@ -13,7 +13,8 @@ import {
   IonCol,
   IonCard,
   IonCardContent,
-  IonCardTitle
+  IonCardTitle,
+  IonBadge
 } from '@ionic/angular/standalone';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -23,6 +24,8 @@ import {
   playCircleOutline,
   createOutline
 } from 'ionicons/icons';
+import { OrdemDbService } from '../services/ordem-db.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +35,7 @@ import {
   imports: [
     IonHeader,
     IonToolbar,
+    NgIf,
     IonTitle,
     IonContent,
     IonButtons,
@@ -43,18 +47,34 @@ import {
     IonCol,
     IonCard,
     IonCardContent,
-    IonCardTitle
+    IonCardTitle,
+    IonBadge
   ]
 })
 export class HomeComponent  {
 
-  constructor(private router: Router) {
+  totalAndamento: number;
+
+  constructor(private router: Router, private ordemDb: OrdemDbService) {
     addIcons({
       'download-outline': downloadOutline,
       'construct-outline': constructOutline,
       'play-circle-outline': playCircleOutline,
       'create-outline': createOutline
     });
+    this.totalAndamento = 0;
+  }
+
+  async ngOnInit() {
+    await this.loadedTotal();
+  }
+
+  async ionViewWillEnter() {
+    await this.loadedTotal();
+  }
+
+  private async loadedTotal (){
+    this.totalAndamento = await this.ordemDb.countBySituacao(1); // 1 = Em andamento
   }
 
   navegarParaOrdens() {

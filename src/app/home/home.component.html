@@ -32,13 +32,17 @@
         </ion-col>
 
         <ion-col size="12" size-md="6" size-lg="4">
-          <ion-card button="true" (click)="navegarParaServicosAndamento()">
-            <ion-card-content class="card-content">
-              <ion-icon name="play-circle-outline" color="primary"></ion-icon>
-              <ion-card-title>Serviços em Andamento</ion-card-title>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
+        <ion-card button="true" (click)="navegarParaServicosAndamento()" class="badge-card">
+
+          <!-- Badge -->
+          <ion-badge *ngIf="totalAndamento > 0" color="danger" class="badge">{{ totalAndamento }}</ion-badge>
+
+          <ion-card-content class="card-content">
+            <ion-icon name="play-circle-outline" color="primary"></ion-icon>
+            <ion-card-title>Serviços em Andamento</ion-card-title>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
 
         <ion-col size="12" size-md="6" size-lg="4">
           <ion-card button="true" (click)="navegarParaCriarOrdem()">

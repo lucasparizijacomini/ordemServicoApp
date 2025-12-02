@@ -37,3 +37,19 @@ ion-card {
     color: #374151;
   }
 }
+
+
+.badge-card {
+  position: relative;
+}
+
+.badge-card .badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 10;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 12px;
+}
+
