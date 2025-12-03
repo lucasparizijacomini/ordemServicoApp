@@ -48,7 +48,7 @@
         <p><strong>Local:</strong> {{ os.local }}</p>
         <p><strong>Tipo:</strong> {{ os.tipoManutencao === '1' ? 'Corretiva' : 'Preventiva' }}</p>
 
-        <div *ngIf="os.problemas?.length">
+        <div *ngIf="os.problemas.length">
           <p><strong>Atividades:</strong> {{ os.problemas.length }}</p>
         </div>
 

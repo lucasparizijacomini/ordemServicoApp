@@ -1,0 +1,180 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Execução OS #{{ ordem.id }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="finalizarOS()">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Barra de Progresso -->
+  <ion-toolbar>
+    <div class="progress-container">
+      <div class="progress-info">
+        <span class="progress-text">
+          <ion-icon name="checkbox-outline"></ion-icon>
+          {{ problemasConcluidos }}/{{ totalProblemas }} concluídos
+        </span>
+        <span class="progress-percent">{{ (progresso * 100).toFixed(0) }}%</span>
+      </div>
+      <ion-progress-bar
+        [value]="progresso"
+        [color]="progresso === 1 ? 'success' : 'primary'">
+      </ion-progress-bar>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+
+    <!-- Informações da OS -->
+    <div class="info-card">
+      <div class="info-header">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <h2>Informações da OS</h2>
+        <ion-badge [color]="ordem.status === 'concluida' ? 'success' : 'primary'">
+          {{ ordem.status === 'em_execucao' ? 'Em Execução' : ordem.status === 'concluida' ? 'Concluída' : 'Pausada' }}
+        </ion-badge>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <ion-icon name="car-sport-outline"></ion-icon>
+          <div>
+            <span class="info-label">Modelo</span>
+            <span class="info-value">{{ ordem.modelo }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <ion-icon name="pricetag-outline"></ion-icon>
+          <div>
+            <span class="info-label">Frota</span>
+            <span class="info-value">{{ ordem.frota }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <ion-icon name="speedometer-outline"></ion-icon>
+          <div>
+            <span class="info-label">Hodômetro</span>
+            <span class="info-value">{{ ordem.hodometro }} km</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <ion-icon name="location-outline"></ion-icon>
+          <div>
+            <span class="info-label">Local</span>
+            <span class="info-value">{{ ordem.local }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <ion-icon name="construct-outline"></ion-icon>
+          <div>
+            <span class="info-label">Tipo</span>
+            <span class="info-value">{{ getTipoManutencaoLabel() }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <ion-icon name="time-outline"></ion-icon>
+          <div>
+            <span class="info-label">Início</span>
+            <span class="info-value">{{ ordem.dataInicio | date:'dd/MM HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Problemas -->
+    <div class="problemas-section">
+      <div class="section-header">
+        <ion-icon name="list-outline"></ion-icon>
+        <h2>Problemas da OS</h2>
+      </div>
+
+      <div class="problemas-list">
+        <ion-card
+          *ngFor="let problema of ordem.problemas"
+          class="problema-card"
+          [class.concluido]="problema.concluido"
+          [attr.data-status]="problema.situacao">
+
+          <ion-card-content>
+            <!-- Header com Checkbox -->
+            <div class="problema-header">
+              <div class="problema-info-header">
+                <h3 [class.riscado]="problema.concluido">{{ problema.tipo }}</h3>
+                <ion-badge
+                  [color]="getStatusColor(problema.situacao)"
+                  (click)="alterarStatusProblema(problema)"
+                  class="status-badge-clickable">
+                  <ion-icon [name]="getStatusIcon(problema.situacao)"></ion-icon>
+                  {{ problema.situacao === 'em_andamento' ? 'Em Andamento' :
+                     problema.situacao === 'pendente' ? 'Pendente' : 'Concluído' }}
+                </ion-badge>
+              </div>
+            </div>
+
+            <!-- Observação -->
+            <div class="problema-observacao" *ngIf="problema.observacao">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <p [class.riscado]="problema.concluido">{{ problema.observacao }}</p>
+            </div>
+
+            <!-- Hora de Conclusão -->
+            <div class="problema-conclusao" *ngIf="problema.concluido && problema.horaConclusao">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <span>Concluído às {{ problema.horaConclusao }}</span>
+            </div>
+
+            <!-- Ações -->
+            <div class="problema-actions">
+              <ion-button
+                size="small"
+                fill="clear"
+                (click)="adicionarObservacao(problema)">
+                <ion-icon slot="start" name="create-outline"></ion-icon>
+                Observação
+              </ion-button>
+
+              <ion-button
+                size="small"
+                fill="clear"
+                (click)="alterarStatusProblema(problema)">
+                <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
+                Status
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Estado Vazio -->
+      <div class="empty-state" *ngIf="ordem.problemas.length === 0">
+        <ion-icon name="clipboard-outline"></ion-icon>
+        <p>Nenhum problema registrado</p>
+      </div>
+    </div>
+
+    <!-- Botão Finalizar -->
+    <ion-button
+      expand="block"
+      size="large"
+      color="success"
+      (click)="finalizarOS()"
+      [disabled]="ordem.status === 'concluida'"
+      class="finalizar-btn">
+      <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+      {{ ordem.status === 'concluida' ? 'OS Finalizada' : 'Finalizar Ordem de Serviço' }}
+    </ion-button>
+
+  </div>
+</ion-content>

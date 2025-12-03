@@ -1,0 +1,98 @@
+.form-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.section-title ion-icon {
+  font-size: 18px;
+  color: var(--ion-color-primary);
+}
+
+/* Status Buttons */
+.status-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.status-btn {
+  --border-radius: 8px;
+  font-size: 13px;
+  height: 48px;
+}
+
+/* Status Preview */
+.status-preview {
+  margin: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-preview ion-card-content {
+  padding: 12px;
+}
+
+.preview-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.preview-content ion-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.preview-content strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.preview-content p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ion-color-medium);
+}
+
+/* Status Colors */
+.preview-content[data-status="pendente"] {
+  color: var(--ion-color-warning);
+}
+
+.preview-content[data-status="em_andamento"] {
+  color: var(--ion-color-primary);
+}
+
+.preview-content[data-status="concluido"] {
+  color: var(--ion-color-success);
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+.save-btn {
+  --border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Responsividade */
+@media (max-width: 576px) {
+  .status-buttons {
+    grid-template-columns: 1fr;
+  }
+}

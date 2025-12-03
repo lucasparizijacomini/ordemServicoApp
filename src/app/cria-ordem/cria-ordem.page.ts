@@ -24,10 +24,11 @@ import {
   IonList,
   IonItemDivider,
   IonButton,
+  IonBadge,
   AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cameraOutline } from 'ionicons/icons';
+import { addCircleOutline, alertCircleOutline, calendarOutline, cameraOutline, carSportOutline, checkmarkCircleOutline, clipboardOutline, close, constructOutline, saveOutline, warningOutline } from 'ionicons/icons';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { OrdemServico } from '../models/ordem.inteface';
 import { ModalOrdemComponent } from './modal-ordem/modal-ordem.component';
@@ -35,8 +36,6 @@ import { OrdemDbService } from '../services/ordem-db.service';
 
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
-
-
 
 @Component({
  selector: 'app-criar-ordem',
@@ -56,17 +55,10 @@ import { Capacitor } from '@capacitor/core';
     IonInput,
     IonSelect,
     IonSelectOption,
-    IonLabel,
     IonIcon,
-    IonList,
-    IonItemDivider,
     IonCard,
-    IonCardHeader,
-    IonCardTitle,
     IonCardContent,
-    // IonRadioGroup,
-    // IonRadio,
-    // IonTextarea,
+    IonBadge,
     IonButton,
   ],
   providers: [ModalController]
@@ -81,7 +73,19 @@ export class CriaOrdemComponent {
   private modalCtrl: ModalController,
   private ordemDb: OrdemDbService
 ) {
-  addIcons({ 'camera-outline': cameraOutline });
+  addIcons({
+    'camera-outline': cameraOutline,
+    'checkmark-circle-outline': checkmarkCircleOutline,
+    'save-outline': saveOutline,
+    'close': close,
+    'car-sport-outline': carSportOutline,
+    'construct-outline': constructOutline,
+    'warning-outline': warningOutline,
+    'calendar-outline': calendarOutline,
+    'alert-circle-outline': alertCircleOutline,
+    'add-circle-outline': addCircleOutline,
+    'clipboard-outline': clipboardOutline
+  });
   this.ordem = new OrdemServico();
 }
 
@@ -90,15 +94,15 @@ export class CriaOrdemComponent {
       component: ModalOrdemComponent
     });
 
-    modal.onDidDismiss().then(result => {
-      const problema = result.data;
+    await modal.present();
 
-      if (problema) {
-        this.ordem.problemas.push(problema);
-      }
-    });
+    const { data } = await modal.onWillDismiss();
 
-    return await modal.present();
+    if (data) {
+      // Gera um ID único para o problema
+      data.id = this.ordem.problemas.length + 1;
+      this.ordem.problemas.push(data);
+    }
   }
 
   async tirarFoto() {
@@ -145,7 +149,7 @@ export class CriaOrdemComponent {
     }
 
     // MARCA COMO EM ANDAMENTO
-    this.ordem.situacao = 1;
+    this.ordem.status = 'em_execucao';
 
     // SALVA NO BANCO
     await this.ordemDb.add(this.ordem);

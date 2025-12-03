@@ -1,0 +1,314 @@
+// Progress Bar
+.progress-container {
+  padding: 12px 16px;
+  background: var(--ion-color-light, #f4f5f8);
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.progress-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.progress-text ion-icon {
+  font-size: 18px;
+  color: var(--ion-color-primary);
+}
+
+.progress-percent {
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  font-size: 16px;
+}
+
+ion-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+}
+
+// Container
+.container {
+  padding: 16px;
+  padding-bottom: 32px;
+}
+
+// Info Card
+.info-card {
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.info-header ion-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary);
+}
+
+.info-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.info-item ion-icon {
+  font-size: 20px;
+  color: var(--ion-color-medium);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.info-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin-top: 2px;
+}
+
+// Problemas Section
+.problemas-section {
+  margin-top: 16px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.section-header ion-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary);
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+// Problema Card
+.problemas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.problema-card {
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.problema-card[data-status="pendente"] {
+  border-left-color: var(--ion-color-warning);
+}
+
+.problema-card[data-status="em_andamento"] {
+  border-left-color: var(--ion-color-primary);
+}
+
+.problema-card[data-status="concluido"] {
+  border-left-color: var(--ion-color-success);
+}
+
+.problema-card.concluido {
+  opacity: 0.7;
+  background: var(--ion-color-light-tint);
+}
+
+.problema-card ion-card-content {
+  padding: 16px;
+}
+
+// Problema Header
+.problema-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.problema-checkbox {
+  margin-top: 4px;
+  --size: 28px;
+  --border-width: 2px;
+}
+
+.problema-info-header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.problema-info-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  transition: all 0.3s ease;
+}
+
+.riscado {
+  text-decoration: line-through;
+  color: var(--ion-color-medium) !important;
+}
+
+.status-badge-clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  align-self: flex-start;
+}
+
+.status-badge-clickable:active {
+  transform: scale(0.95);
+}
+
+.status-badge-clickable ion-icon {
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+// Observação
+.problema-observacao {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: var(--ion-color-light, #f4f5f8);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.problema-observacao ion-icon {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.problema-observacao p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ion-color-dark);
+  line-height: 1.5;
+}
+
+// Conclusão
+.problema-conclusao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--ion-color-success-tint);
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.problema-conclusao ion-icon {
+  font-size: 18px;
+}
+
+.problema-conclusao span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ion-color-success-shade);
+}
+
+// Actions
+.problema-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+.problema-actions ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  font-size: 13px;
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--ion-color-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  opacity: 0.3;
+}
+
+.empty-state p {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+// Botão Finalizar
+.finalizar-btn {
+  margin-top: 24px;
+  --border-radius: 12px;
+  font-weight: 600;
+  height: 56px;
+}
+
+// Responsividade
+@media (min-width: 768px) {
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -74,7 +74,7 @@ export class HomeComponent  {
   }
 
   private async loadedTotal (){
-    this.totalAndamento = await this.ordemDb.countBySituacao(1); // 1 = Em andamento
+    this.totalAndamento = await this.ordemDb.countByStatus('em_execucao'); // 1 = Em andamento
   }
 
   navegarParaOrdens() {

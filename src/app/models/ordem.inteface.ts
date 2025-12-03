@@ -1,46 +1,60 @@
-export class OrdemServico implements IOrdemServico{
+export class OrdemServico implements IOrdemServico {
+
   id?: number;
   modelo: string;
   frota: string;
-  hodometro: number;
+  hodometro: string;
   local: string;
   tipoManutencao: string;
+  fotoUrl?: string | undefined;
   operador: string;
-  fotoUrl: string;
-  situacao: number;
   problemas: Problemas[];
+  status: "aguardando_execucao" | "em_execucao" | "concluida" | "pausada";
+  dataInicio?: string | undefined;
+  dataAbertura?: string | undefined;
+  dataConclusao?: string | undefined;
+
 
   constructor(){
     this.modelo = '';
     this.frota = '';
-    this.hodometro = 0;
+    this.hodometro = '';
     this.local = '';
     this.tipoManutencao = '1';
     this.operador = '';
     this.fotoUrl = '';
-    this.situacao = 1;
-    this.problemas = []
+    this.status = 'aguardando_execucao';
+    this.problemas = [];
+    this.dataAbertura = new Date().toISOString();
   }
 
 }
+
 
 export interface IOrdemServico {
   id?: number;
   modelo: string;
   frota: string;
-  hodometro: number;
-  local: string
-  tipoManutencao: string;
+  hodometro: string;
   operador: string;
-  fotoUrl: string;
-  situacao: number;
+  local: string;
+  tipoManutencao: string;
+  fotoUrl?: string;
   problemas: Problemas[];
+  status: 'aguardando_execucao' | 'em_execucao' | 'concluida' | 'pausada';
+  dataInicio?: string;
+  dataAbertura?: string;
+  dataConclusao?: string;
 }
 
 export interface Problemas {
   id: number;
   tipo: string;
-  observacao: string;
   situacao: string;
+  observacao: string;
+  concluido?: boolean;
+  horaConclusao?: string;
 }
+
+
 

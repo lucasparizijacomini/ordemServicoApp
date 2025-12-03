@@ -12,7 +12,13 @@ import {
   IonItem,
   IonInput,
   IonButton,
+  IonIcon,
+  IonCard,
+  IonCardContent,
+  IonLabel
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { buildOutline, flagOutline, timeOutline } from 'ionicons/icons';
 import { Problemas } from 'src/app/models/ordem.inteface';
 
 @Component({
@@ -31,25 +37,77 @@ import { Problemas } from 'src/app/models/ordem.inteface';
     IonContent,
     IonItem,
     IonInput,
+    IonIcon,
+    IonCard,
+    IonCardContent,
+    IonLabel
   ]
 })
 export class ModalOrdemComponent {
 
-  problema: Problemas = {
+   problema: Problemas = {
     id: 0,
     tipo: '',
     situacao: '',
     observacao: ''
   };
 
-  constructor(private modal: ModalController) {}
-
-  close() {
-    this.modal.dismiss();
+  constructor(private modalCtrl: ModalController) {
+    addIcons({
+      'flag-outline': flagOutline,
+      'time-outline': timeOutline,
+      'build-outline': buildOutline
+    })
   }
 
+  // Método para fechar o modal
+  close() {
+    this.modalCtrl.dismiss();
+  }
+
+  // Método para definir a situação
+  setSituacao(situacao: string) {
+    this.problema.situacao = situacao;
+  }
+
+  // Retorna o ícone baseado na situação
+  getStatusIcon(): string {
+    const icons: { [key: string]: string } = {
+      'pendente': 'time-outline',
+      'em_andamento': 'build-outline',
+      'concluido': 'checkmark-circle-outline'
+    };
+    return icons[this.problema.situacao] || 'help-outline';
+  }
+
+  // Retorna o label baseado na situação
+  getStatusLabel(): string {
+    const labels: { [key: string]: string } = {
+      'pendente': 'Pendente',
+      'em_andamento': 'Em Andamento',
+      'concluido': 'Concluído'
+    };
+    return labels[this.problema.situacao] || '';
+  }
+
+  // Retorna a descrição baseada na situação
+  getStatusDescription(): string {
+    const descriptions: { [key: string]: string } = {
+      'pendente': 'Problema aguardando início da execução',
+      'em_andamento': 'Problema sendo resolvido no momento',
+      'concluido': 'Problema já foi resolvido'
+    };
+    return descriptions[this.problema.situacao] || '';
+  }
+
+  // Método para salvar e retornar o problema
   salvar() {
-    this.modal.dismiss(this.problema);
+    if (this.problema.tipo && this.problema.situacao) {
+      this.modalCtrl.dismiss(this.problema);
+    } else {
+      // Opcional: Adicionar um toast de erro
+      console.log('Preencha os campos obrigatórios');
+    }
   }
 
 }

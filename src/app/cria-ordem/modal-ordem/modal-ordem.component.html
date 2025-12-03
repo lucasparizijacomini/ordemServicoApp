@@ -2,39 +2,107 @@
   <ion-toolbar color="primary">
     <ion-title>Adicionar Problema</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="close()">Fechar</ion-button>
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  <form>
 
-  <ion-item>
-    <ion-input
-      label="Tipo"
-      labelPlacement="stacked"
-      [(ngModel)]="problema.tipo">
-    </ion-input>
-  </ion-item>
+    <!-- Tipo de Problema -->
+    <div class="form-section">
+      <ion-item lines="full">
+        <ion-input
+          label="Tipo de Problema *"
+          labelPlacement="floating"
+          placeholder="Ex: Troca de óleo, Freio, Pneu..."
+          [(ngModel)]="problema.tipo"
+          name="tipo"
+          required>
+        </ion-input>
+      </ion-item>
+    </div>
 
-  <ion-item>
-    <ion-input
-      label="Situação"
-      labelPlacement="stacked"
-      [(ngModel)]="problema.situacao">
-    </ion-input>
-  </ion-item>
+    <!-- Status do Problema -->
+    <div class="form-section">
+      <ion-label class="section-title">
+        <ion-icon name="flag-outline"></ion-icon>
+        Status do Problema
+      </ion-label>
 
-  <ion-item>
-    <ion-textarea
-      label="Observação"
-      labelPlacement="stacked"
-      [(ngModel)]="problema.observacao">
-    </ion-textarea>
-  </ion-item>
+      <div class="status-buttons">
+        <ion-button
+          [fill]="problema.situacao === 'pendente' ? 'solid' : 'outline'"
+          [color]="problema.situacao === 'pendente' ? 'warning' : 'medium'"
+          (click)="setSituacao('pendente')"
+          class="status-btn">
+          <ion-icon slot="start" name="time-outline"></ion-icon>
+          Pendente
+        </ion-button>
 
-  <ion-button expand="block" (click)="salvar()">
-    Salvar
-  </ion-button>
+        <ion-button
+          [fill]="problema.situacao === 'em_andamento' ? 'solid' : 'outline'"
+          [color]="problema.situacao === 'em_andamento' ? 'primary' : 'medium'"
+          (click)="setSituacao('em_andamento')"
+          class="status-btn">
+          <ion-icon slot="start" name="build-outline"></ion-icon>
+          Em Andamento
+        </ion-button>
 
+        <ion-button
+          [fill]="problema.situacao === 'concluido' ? 'solid' : 'outline'"
+          [color]="problema.situacao === 'concluido' ? 'success' : 'medium'"
+          (click)="setSituacao('concluido')"
+          class="status-btn">
+          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+          Concluído
+        </ion-button>
+      </div>
+
+      <!-- Preview do Status -->
+      <ion-card class="status-preview" *ngIf="problema.situacao">
+        <ion-card-content>
+          <div class="preview-content" [attr.data-status]="problema.situacao">
+            <ion-icon [name]="getStatusIcon()"></ion-icon>
+            <div>
+              <strong>{{ getStatusLabel() }}</strong>
+              <p>{{ getStatusDescription() }}</p>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Observações -->
+    <div class="form-section">
+      <ion-item lines="none">
+        <ion-textarea
+          label="Observações"
+          labelPlacement="floating"
+          placeholder="Descreva detalhes do problema..."
+          [(ngModel)]="problema.observacao"
+          name="observacao"
+          rows="4"
+          autoGrow="true">
+        </ion-textarea>
+      </ion-item>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="action-buttons">
+      <ion-button
+        expand="block"
+        size="large"
+        (click)="salvar()"
+        [disabled]="!problema.tipo || !problema.situacao"
+        class="save-btn">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        Salvar Problema
+      </ion-button>
+    </div>
+
+  </form>
 </ion-content>

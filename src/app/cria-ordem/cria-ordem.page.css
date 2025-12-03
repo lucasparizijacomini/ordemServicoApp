@@ -1,102 +1,171 @@
 .container {
   padding: 16px;
+  padding-bottom: 32px;
 }
 
-ion-item {
-  --padding-start: 0;
-  --inner-padding-end: 0;
+.section-card {
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  padding: 16px;
   margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.foto-section {
-  margin: 24px 0;
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ion-color-light, #f4f5f8);
 }
 
-.section-label {
-  display: block;
+.section-header ion-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary);
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 12px;
+  flex: 1;
+}
+
+.section-header ion-badge {
   font-size: 14px;
 }
 
+/* Foto */
 .foto-container {
-  display: flex;
-  justify-content: flex-start;
+  text-align: center;
+  cursor: pointer;
 }
 
 .foto-placeholder {
-  width: 120px;
-  height: 160px;
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
+  width: 100%;
+  max-width: 300px;
+  height: 200px;
+  margin: 0 auto 8px;
+  border: 2px dashed var(--ion-color-medium, #92949c);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  background: #f9fafb;
-
-  &:hover {
-    border-color: #0891b2;
-    background: #f0f9ff;
-  }
-
-  ion-icon {
-    font-size: 48px;
-    color: #9ca3af;
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 6px;
-  }
+  background: var(--ion-color-light, #f4f5f8);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-.servico-section {
-  margin: 24px 0 16px 0;
+.foto-placeholder:hover {
+  border-color: var(--ion-color-primary);
+  background: var(--ion-color-primary-tint);
+}
+
+.foto-placeholder.has-photo {
+  border-style: solid;
+  border-color: var(--ion-color-success);
+}
+
+.foto-placeholder ion-icon {
+  font-size: 48px;
+  color: var(--ion-color-medium);
+}
+
+.foto-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-hint {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+/* Problemas */
+.add-problema-btn {
+  margin-bottom: 16px;
+}
+
+.problemas-list {
+  margin-top: 16px;
+}
+
+.problema-card {
+  margin: 0 0 12px 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.problema-card ion-card-content {
   padding: 12px;
-  background: #f3f4f6;
-  border-radius: 8px;
 }
 
-.situacao-section {
-  margin: 24px 0;
-
-  .radio-options {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-
-    ion-item {
-      margin-bottom: 0;
-    }
-  }
+.problema-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ion-color-light);
 }
 
-.finalizar-button {
-  margin: 32px 0 24px 0;
-  --background: #0891b2;
+.problema-tipo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--ion-color-primary);
+}
+
+.problema-tipo ion-icon {
+  font-size: 20px;
+}
+
+.problema-info p {
+  margin: 8px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.problema-info ion-icon {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--ion-color-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  opacity: 0.3;
+}
+
+.empty-state p {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+/* Botão Finalizar */
+.finalizar-btn {
+  margin-top: 24px;
+  --border-radius: 12px;
   font-weight: 600;
 }
 
-ion-textarea {
-  --padding-start: 12px;
-  --padding-top: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  margin-top: 8px;
-}
-
-.problemas-section {
-  margin-top: 20px;
-}
-
-.problema-item {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  background: #f7f7f7;
+/* Responsividade */
+@media (min-width: 768px) {
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
 }

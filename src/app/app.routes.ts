@@ -14,6 +14,10 @@ export const routes: Routes = [
     loadComponent: () => import('./ordem-andamento/ordem-andamento.component').then(c => c.OrdemAndamentoComponent)
   },
   {
+    path: 'executar/:id',
+    loadComponent: () => import('./ordem-andamento/ordens-execucao/ordens-execucao.component').then(c => c.OrdensExecucaoComponent)
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
