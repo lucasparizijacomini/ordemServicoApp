@@ -72,7 +72,7 @@ export class OrdemAndamentoComponent  implements OnInit {
 
   async updateTotalCount() {
     this.totalCount = await this.ordemDb.countFiltered({
-      situacao: 1,
+      status: 'em_execucao',
       tipo: this.filtroTipo,
       search: this.searchTerm
     });
@@ -90,7 +90,7 @@ export class OrdemAndamentoComponent  implements OnInit {
     const result = await this.ordemDb.getPaged({
       skip,
       limit: this.pageSize,
-      situacao: 1, // andamento = 1
+      status: 'em_execucao',
       tipo: this.filtroTipo,
       search: this.searchTerm
     });
@@ -133,30 +133,4 @@ export class OrdemAndamentoComponent  implements OnInit {
     // navegar para a página de execução (passa o id)
     this.router.navigate(['/executar', os.id]);
   }
-
-  // ordens: OrdemServico[];
-
-  // constructor(private ordemDb: OrdemDbService,
-  //   private router: Router
-  // ) {
-  //   this.ordens = [];
-  // }
-
-  // async ngOnInit() {
-  //   await this.carregarOrdens();
-  // }
-
-  // async ionViewWillEnter() {
-  //   await this.carregarOrdens();
-  // }
-
-  // async carregarOrdens() {
-  //   // Busca todas as OS onde situacao === 1
-  //   this.ordens =  await this.ordemDb.getEmAndamento();
-  // }
-
-  // executarOS(os: OrdemServico) {
-  //   this.router.navigate(['/executar', os.id]);
-  // }
-
 }

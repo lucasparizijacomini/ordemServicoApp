@@ -1,8 +1,8 @@
 import { OrdemDbService } from './../../services/ordem-db.service';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 
 import {
@@ -51,13 +51,14 @@ export class OrdensExecucaoComponent implements OnInit {
   ordem: OrdemServico = new OrdemServico();
   osId: number = 0;
 
-  constructor(
-    private route: ActivatedRoute,
-    private alertCtrl: AlertController,
-    private toastCtrl: ToastController,
-    private ordemDbService: OrdemDbService
-  ) {
-    this.osId = Number(this.route.snapshot.paramMap.get('id'));
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute)
+  private alertCtrl = inject(AlertController)
+  private toastCtrl = inject(ToastController)
+  private ordemDbService = inject(OrdemDbService)
+
+  constructor() {
+    this.osId = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     addIcons({
       'build-outline': buildOutline,
       'checkmark-done-outline': checkmarkDoneOutline,
@@ -93,7 +94,10 @@ export class OrdensExecucaoComponent implements OnInit {
       console.error("Ordem não encontrada");
       return;
     }
-    // this.osService.getOS(id).subscribe(data => this.ordem = data);
+
+    this.ordem.status = 'em_execucao';
+    this.ordem.dataInicio = new Date().toLocaleTimeString('pt-BR');
+    this.ordemDbService.update(this.ordem)
     console.log('Carregando OS:', id);
   }
 
@@ -145,6 +149,12 @@ export class OrdensExecucaoComponent implements OnInit {
     await alert.present();
   }
 
+  get podeFinalizar(): boolean {
+    return this.ordem.status === 'concluida' ||
+          !this.ordem.problemas.every(el => el.situacao === 'concluido');
+  }
+
+
   // Adicionar observação ao problema
   async adicionarObservacao(problema: Problemas) {
     const alert = await this.alertCtrl.create({
@@ -187,7 +197,7 @@ export class OrdensExecucaoComponent implements OnInit {
 
   async mostrarAlertaConclusao() {
     const alert = await this.alertCtrl.create({
-      header: '🎉 Todos os problemas resolvidos!',
+      header: 'Todos os problemas resolvidos!',
       message: 'Deseja finalizar esta ordem de serviço?',
       buttons: [
         {
@@ -207,27 +217,13 @@ export class OrdensExecucaoComponent implements OnInit {
   }
 
   async finalizarOS() {
-    const alert = await this.alertCtrl.create({
-      header: 'Finalizar OS',
-      message: 'Tem certeza que deseja finalizar esta ordem de serviço?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Finalizar',
-          handler: () => {
-            this.ordem.status = 'concluida';
-            this.ordem.dataConclusao = new Date().toISOString();
-            this.mostrarToast('Ordem de serviço finalizada com sucesso!', 'success');
-            // Aqui você pode navegar para outra tela ou salvar no backend
-          }
-        }
-      ]
-    });
 
-    await alert.present();
+    this.ordem.dataConclusao = new Date().toISOString();
+    this.ordem.status = 'concluida';
+    await this.ordemDbService.update(this.ordem);
+    this.mostrarToast('Ordem de serviço finalizada com sucesso!', 'success');
+    this.router.navigate(['/ordens'])
+
   }
 
   async mostrarToast(message: string, color: string) {

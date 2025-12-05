@@ -4,11 +4,6 @@
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Execução OS #{{ ordem.id }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="finalizarOS()">
-        <ion-icon name="checkmark-done-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 
   <!-- Barra de Progresso -->
@@ -170,7 +165,7 @@
       size="large"
       color="success"
       (click)="finalizarOS()"
-      [disabled]="ordem.status === 'concluida'"
+      [disabled]="podeFinalizar"
       class="finalizar-btn">
       <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
       {{ ordem.status === 'concluida' ? 'OS Finalizada' : 'Finalizar Ordem de Serviço' }}

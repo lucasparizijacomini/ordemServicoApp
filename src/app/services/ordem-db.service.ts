@@ -81,24 +81,14 @@ export class OrdemDbService {
     return this.db.delete('ordens', id);
   }
 
-  // ==================== QUERIES POR STATUS ====================
-
-  async getEmAndamento() {
-    await this.ready;
-    return this.db.getAllFromIndex('ordens', 'by-situacao', 1);
-  }
-
-  async getFinalizadas() {
-    await this.ready;
-    return this.db.getAllFromIndex('ordens', 'by-situacao', 2);
-  }
-
-  async getBySituacao(situacao: number): Promise<IOrdemServico[]> {
-    await this.ready;
-    return this.db.getAllFromIndex('ordens', 'by-situacao', situacao);
-  }
-
   // ==================== EXECUÇÃO DE OS ====================
+
+   async getOSAguardandoExecucao(): Promise<IOrdemServico[]> {
+    await this.ready;
+    const all = await this.db.getAll('ordens');
+    return all.filter(os => os.status === 'aguardando_execucao');
+  }
+
 
   /**
    * Retorna OSs que estão em execução (status: 'em_execucao')
@@ -242,6 +232,7 @@ export class OrdemDbService {
   async getEstatisticas(): Promise<{
     total: number;
     emExecucao: number;
+    aguardandoExecucao: number;
     concluidas: number;
     pausadas: number;
   }> {
@@ -250,6 +241,7 @@ export class OrdemDbService {
 
     return {
       total: all.length,
+      aguardandoExecucao: all.filter(os => os.status === 'em_execucao').length,
       emExecucao: all.filter(os => os.status === 'em_execucao').length,
       concluidas: all.filter(os => os.status === 'concluida').length,
       pausadas: all.filter(os => os.status === 'pausada').length,
@@ -259,7 +251,7 @@ export class OrdemDbService {
   // ==================== PAGINAÇÃO E FILTROS ====================
 
   async countFiltered(options?: {
-    situacao?: number;
+    situacao?: string;
     tipo?: string;
     search?: string;
     status?: string;
@@ -272,7 +264,7 @@ export class OrdemDbService {
   async getPaged(options: {
     skip: number;
     limit: number;
-    situacao?: number;
+    situacao?: string;
     tipo?: string;
     search?: string;
     status?: string;
@@ -292,7 +284,7 @@ export class OrdemDbService {
   private filterArray(
     all: IOrdemServico[],
     opts?: {
-      situacao?: number;
+      situacao?: string;
       tipo?: string;
       search?: string;
       status?: string;

@@ -18,6 +18,10 @@ export const routes: Routes = [
     loadComponent: () => import('./ordem-andamento/ordens-execucao/ordens-execucao.component').then(c => c.OrdensExecucaoComponent)
   },
   {
+    path: 'ordens',
+    loadComponent: ()=> import('./ordens/ordens.component').then(c => c.OrdensComponent)
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'

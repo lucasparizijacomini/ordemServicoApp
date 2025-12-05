@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Ordens</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="resetAndLoad()">
+        Atualizar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Buscar por modelo, frota, local ou operador"
+      (ionInput)="onSearchChange($event)"
+      debounce="300"
+    ></ion-searchbar>
+
+    <div class="counter">
+      <ion-button (click)="navegarParaCriarOrdem()" color="primary">Criar Ordem</ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list *ngIf="ordens && ordens.length">
+    <ion-card *ngFor="let os of ordens">
+      <ion-card-header>
+        <ion-card-title>{{ os.modelo }} — {{ os.frota }}</ion-card-title>
+        <ion-card-subtitle>Hodômetro: {{ os.hodometro }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Local:</strong> {{ os.local }}</p>
+        <p><strong>Tipo:</strong> {{ os.tipoManutencao === '1' ? 'Corretiva' : 'Preventiva' }}</p>
+
+        <div *ngIf="os.problemas.length">
+          <p><strong>Atividades:</strong> {{ os.problemas.length }}</p>
+        </div>
+
+        <div *ngIf="os.fotoUrl" class="img-wrapper">
+          <img [src]="os.fotoUrl" />
+        </div>
+
+        <ion-button expand="block" color="primary" (click)="executarOS(os)">
+          Executar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+  <div *ngIf="(!ordens || ordens.length === 0) && !loading" class="empty">
+    <p>Nenhuma Ordem Criada.</p>
+  </div>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Carregando mais ordens..."
+    ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>

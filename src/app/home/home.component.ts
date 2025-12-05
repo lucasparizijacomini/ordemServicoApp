@@ -54,6 +54,7 @@ import { NgIf } from '@angular/common';
 export class HomeComponent  {
 
   totalAndamento: number;
+  totalAguardandoExecucao: number;
 
   constructor(private router: Router, private ordemDb: OrdemDbService) {
     addIcons({
@@ -63,6 +64,7 @@ export class HomeComponent  {
       'create-outline': createOutline
     });
     this.totalAndamento = 0;
+    this.totalAguardandoExecucao = 0;
   }
 
   async ngOnInit() {
@@ -75,10 +77,11 @@ export class HomeComponent  {
 
   private async loadedTotal (){
     this.totalAndamento = await this.ordemDb.countByStatus('em_execucao'); // 1 = Em andamento
+    this.totalAguardandoExecucao = await this.ordemDb.countByStatus('aguardando_execucao')
   }
 
   navegarParaOrdens() {
-    //this.router.navigate(['/criar-ordem']);
+    this.router.navigate(['/ordens']);
   }
 
   navegarParaServicosAndamento() {
@@ -86,10 +89,6 @@ export class HomeComponent  {
     this.router.navigate(['/ordens-andamento']);
   }
 
-  navegarParaCriarOrdem() {
-    console.log('Navegar para Criar Ordem');
-    this.router.navigate(['/criar-ordem']);
-    // this.router.navigate(['/criar-ordem']);
-  }
+
 
 }

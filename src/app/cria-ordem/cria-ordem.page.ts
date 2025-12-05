@@ -149,7 +149,7 @@ export class CriaOrdemComponent {
     }
 
     // MARCA COMO EM ANDAMENTO
-    this.ordem.status = 'em_execucao';
+    this.ordem.status = 'aguardando_execucao';
 
     // SALVA NO BANCO
     await this.ordemDb.add(this.ordem);
@@ -160,7 +160,7 @@ export class CriaOrdemComponent {
       buttons: [
         {
           text: 'OK',
-          handler: () => this.router.navigate(['/home'])
+          handler: () => this.router.navigate(['/ordens'])
         }
       ]
     });
