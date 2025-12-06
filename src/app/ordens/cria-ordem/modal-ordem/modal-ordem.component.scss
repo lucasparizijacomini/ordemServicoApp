@@ -90,6 +90,54 @@
   font-weight: 600;
 }
 
+/* Foto */
+.foto-container {
+  text-align: center;
+  cursor: pointer;
+}
+
+.foto-placeholder {
+  width: 100%;
+  max-width: 300px;
+  height: 200px;
+  margin: 0 auto 8px;
+  border: 2px dashed var(--ion-color-medium, #92949c);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ion-color-light, #f4f5f8);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.foto-placeholder:hover {
+  border-color: var(--ion-color-primary);
+  background: var(--ion-color-primary-tint);
+}
+
+.foto-placeholder.has-photo {
+  border-style: solid;
+  border-color: var(--ion-color-success);
+}
+
+.foto-placeholder ion-icon {
+  font-size: 48px;
+  color: var(--ion-color-medium);
+}
+
+.foto-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-hint {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
 /* Responsividade */
 @media (max-width: 576px) {
   .status-buttons {

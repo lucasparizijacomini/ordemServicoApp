@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import {
   IonHeader,
   IonToolbar,
@@ -14,28 +14,18 @@ import {
   IonInput,
   IonSelect,
   IonSelectOption,
-  IonLabel,
   IonIcon,
-  IonTextarea,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent,
-  IonList,
-  IonItemDivider,
   IonButton,
   IonBadge,
   AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addCircleOutline, alertCircleOutline, calendarOutline, cameraOutline, carSportOutline, checkmarkCircleOutline, clipboardOutline, close, constructOutline, saveOutline, warningOutline } from 'ionicons/icons';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { OrdemServico } from '../models/ordem.inteface';
+import { addCircleOutline, alertCircleOutline, calendarOutline, cameraOutline, carSportOutline, checkmarkCircleOutline, clipboardOutline, close, constructOutline, saveOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { ModalOrdemComponent } from './modal-ordem/modal-ordem.component';
-import { OrdemDbService } from '../services/ordem-db.service';
-
-import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Capacitor } from '@capacitor/core';
+import { OrdemServico } from 'src/app/models/ordem.inteface';
+import { OrdemDbService } from 'src/app/services/ordem-db.service';
 
 @Component({
  selector: 'app-criar-ordem',
@@ -84,7 +74,8 @@ export class CriaOrdemComponent {
     'calendar-outline': calendarOutline,
     'alert-circle-outline': alertCircleOutline,
     'add-circle-outline': addCircleOutline,
-    'clipboard-outline': clipboardOutline
+    'clipboard-outline': clipboardOutline,
+    'trash-outline': trashOutline
   });
   this.ordem = new OrdemServico();
 }
@@ -104,38 +95,6 @@ export class CriaOrdemComponent {
       this.ordem.problemas.push(data);
     }
   }
-
-  async tirarFoto() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 85,
-        allowEditing: false,
-        resultType: CameraResultType.Base64,
-        source: CameraSource.Camera
-      });
-
-      const fileName = `foto_os_${Date.now()}.jpeg`;
-
-      // Salvar no Filesystem
-      const savedFile = await Filesystem.writeFile({
-        path: fileName,
-        data: image.base64String!,
-        directory: Directory.Data
-      });
-
-      // Salvar APENAS o caminho no objeto da OS
-        const webPath = Capacitor.convertFileSrc(savedFile.uri);
-
-      // Armazena o caminho convertido
-      this.ordem.fotoUrl = webPath;
-
-      console.log('Foto salva em:', webPath);
-
-    } catch (error) {
-      console.error('Erro ao tirar/salvar foto:', error);
-    }
-  }
-
 
   async finalizarOS() {
     // Validações simples
@@ -177,7 +136,8 @@ export class CriaOrdemComponent {
       id: 0,
       tipo: '',
       observacao: '',
-      situacao: ''
+      situacao: '',
+      fotoUrl: ''
     });
   }
 

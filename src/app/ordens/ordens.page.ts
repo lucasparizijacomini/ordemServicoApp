@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonButton, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonButtons, IonLabel, IonSegment, IonSegmentButton, IonBackButton } from '@ionic/angular/standalone';
 import { OrdemServico } from '../models/ordem.inteface';
 import { OrdemDbService } from '../services/ordem-db.service';
 import { Router } from '@angular/router';
 
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonButton, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonButtons, IonLabel, IonSegment, IonSegmentButton, IonBackButton } from '@ionic/angular/standalone';
-import { CommonModule, NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
 @Component({
-  selector: 'app-ordem-andamento',
-  templateUrl: './ordem-andamento.component.html',
-  styleUrls: ['./ordem-andamento.component.scss'],
+  selector: 'app-ordens',
+  templateUrl: './ordens.page.html',
+  styleUrls: ['./ordens.page.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -30,14 +30,11 @@ import { FormsModule } from '@angular/forms';
     IonSearchbar,
     IonInfiniteScroll,
     IonButtons,
-    IonLabel,
-    IonSegment,
-    IonSegmentButton,
     IonInfiniteScrollContent,
     IonBackButton
-]
+  ]
 })
-export class OrdemAndamentoComponent  implements OnInit {
+export class OrdensPage implements OnInit {
 
   ordens: OrdemServico[] = [];
   pageSize = 10;
@@ -47,20 +44,26 @@ export class OrdemAndamentoComponent  implements OnInit {
 
   // filtros / busca
   searchTerm = '';
-  filtroTipo: string | undefined; // '1' or '2' or undefined
 
   totalCount = 0; // total de ordens que batem no filtro (para contador)
 
-  constructor(private ordemDb: OrdemDbService, private router: Router) {}
+  private ordemDb = inject(OrdemDbService);
+  private router = inject(Router);
+
+  constructor() {}
 
   async ngOnInit() {
     await this.resetAndLoad();
   }
 
   async ionViewWillEnter() {
-    // recarregar ao entrar na tela
     await this.resetAndLoad();
   }
+
+  navegarParaCriarOrdem() {
+    this.router.navigate(['/criar-ordem']);
+  }
+
 
   async resetAndLoad() {
     this.page = 0;
@@ -72,8 +75,7 @@ export class OrdemAndamentoComponent  implements OnInit {
 
   async updateTotalCount() {
     this.totalCount = await this.ordemDb.countFiltered({
-      status: 'em_execucao',
-      tipo: this.filtroTipo,
+      status: 'aguardando_execucao',
       search: this.searchTerm
     });
   }
@@ -90,10 +92,11 @@ export class OrdemAndamentoComponent  implements OnInit {
     const result = await this.ordemDb.getPaged({
       skip,
       limit: this.pageSize,
-      status: 'em_execucao',
-      tipo: this.filtroTipo,
+      status: 'aguardando_execucao',
       search: this.searchTerm
     });
+
+    console.log("result", result)
 
     // adicionar ao array
     this.ordens = [...this.ordens, ...result];
@@ -123,16 +126,9 @@ export class OrdemAndamentoComponent  implements OnInit {
     await this.resetAndLoad();
   }
 
-  // filtro por tipo (segment or select)
-  async onFiltroTipoChange(newTipo?: any) {
-    this.filtroTipo = newTipo;
-    await this.resetAndLoad();
-  }
-
   executarOS(os: OrdemServico) {
     // navegar para a página de execução (passa o id)
     this.router.navigate(['/executar', os.id, false]);
   }
-
 
 }

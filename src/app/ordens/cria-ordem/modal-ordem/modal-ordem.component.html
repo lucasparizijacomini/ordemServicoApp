@@ -26,6 +26,22 @@
       </ion-item>
     </div>
 
+    <!-- SEÇÃO: Foto -->
+    <div class="form-section">
+      <div class="section-title">
+        <ion-icon name="camera-outline"></ion-icon>
+        <h2>Registro Fotográfico</h2>
+      </div>
+
+      <div class="foto-container" (click)="tirarFoto()">
+        <div class="foto-placeholder" [class.has-photo]="problema.fotoUrl">
+          <ion-icon *ngIf="!problema.fotoUrl" name="camera-outline" size="large"></ion-icon>
+          <img *ngIf="problema.fotoUrl" [src]="problema.fotoUrl" alt="Foto do veículo">
+        </div>
+        <p class="foto-hint">{{ problema.fotoUrl ? 'Toque para alterar' : 'Toque para adicionar foto' }}</p>
+      </div>
+    </div>
+
     <!-- Status do Problema -->
     <div class="form-section">
       <ion-label class="section-title">
@@ -76,20 +92,17 @@
       </ion-card>
     </div>
 
-    <!-- Observações -->
     <div class="form-section">
-      <ion-item lines="none">
-        <ion-textarea
-          label="Observações"
-          labelPlacement="floating"
-          placeholder="Descreva detalhes do problema..."
-          [(ngModel)]="problema.observacao"
-          name="observacao"
-          rows="4"
-          autoGrow="true">
-        </ion-textarea>
-      </ion-item>
+      <ion-textarea
+        label="Observações"
+        labelPlacement="floating"
+        placeholder="Descreva detalhes do problema..."
+        [(ngModel)]="problema.observacao"
+        name="observacao"
+        autoGrow="true">
+      </ion-textarea>
     </div>
+
 
     <!-- Botões de Ação -->
     <div class="action-buttons">

@@ -90,22 +90,6 @@
         </ion-item>
       </div>
 
-      <!-- SEÇÃO: Foto -->
-      <div class="section-card">
-        <div class="section-header">
-          <ion-icon name="camera-outline"></ion-icon>
-          <h2>Registro Fotográfico</h2>
-        </div>
-
-        <div class="foto-container" (click)="tirarFoto()">
-          <div class="foto-placeholder" [class.has-photo]="ordem.fotoUrl">
-            <ion-icon *ngIf="!ordem.fotoUrl" name="camera-outline" size="large"></ion-icon>
-            <img *ngIf="ordem.fotoUrl" [src]="ordem.fotoUrl" alt="Foto do veículo">
-          </div>
-          <p class="foto-hint">{{ ordem.fotoUrl ? 'Toque para alterar' : 'Toque para adicionar foto' }}</p>
-        </div>
-      </div>
-
       <!-- SEÇÃO: Problemas -->
       <div class="section-card problemas-section">
         <div class="section-header">
@@ -144,6 +128,11 @@
               <div class="problema-info">
                 <p><ion-icon name="flag-outline"></ion-icon> <strong>Situação:</strong> {{ p.situacao }}</p>
                 <p *ngIf="p.observacao"><ion-icon name="document-text-outline"></ion-icon> <strong>Observação:</strong> {{ p.observacao }}</p>
+              </div>
+
+              <!-- MINIATURA DA IMAGEM -->
+              <div *ngIf="p.fotoUrl" class="problema-thumb">
+                <img [src]="p.fotoUrl" />
               </div>
             </ion-card-content>
           </ion-card>

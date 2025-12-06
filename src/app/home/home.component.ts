@@ -89,6 +89,7 @@ export class HomeComponent  {
     this.router.navigate(['/ordens-andamento']);
   }
 
-
-
+  navegarParaOrdensFinalizadas(){
+    this.router.navigate(['/ordens-finalizadas']);
+  }
 }

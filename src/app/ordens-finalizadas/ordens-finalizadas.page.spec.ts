@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { OrdensComponent } from './ordens.component';
+import { OrdensComponent } from './ordens-finalizadas.page';
 
 describe('OrdensComponent', () => {
   let component: OrdensComponent;

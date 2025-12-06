@@ -53,6 +53,7 @@ export interface Problemas {
   situacao: string;
   observacao: string;
   concluido?: boolean;
+  fotoUrl: string;
   horaConclusao?: string;
 }
 

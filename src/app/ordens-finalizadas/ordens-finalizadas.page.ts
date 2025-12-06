@@ -8,9 +8,9 @@ import { OrdemDbService } from '../services/ordem-db.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-ordens',
-  templateUrl: './ordens.component.html',
-  styleUrls: ['./ordens.component.css'],
+  selector: 'app-ordens-finalizadas',
+  templateUrl: './ordens-finalizadas.page.html',
+  styleUrls: ['./ordens-finalizadas.page.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -34,7 +34,7 @@ import { Router } from '@angular/router';
     IonBackButton
   ]
 })
-export class OrdensComponent implements OnInit {
+export class OrdensFinalizadasPage implements OnInit {
 
   ordens: OrdemServico[] = [];
   pageSize = 10;
@@ -74,7 +74,7 @@ export class OrdensComponent implements OnInit {
 
   async updateTotalCount() {
     this.totalCount = await this.ordemDb.countFiltered({
-      status: 'aguardando_execucao',
+      status: 'concluida',
       search: this.searchTerm
     });
   }
@@ -91,7 +91,7 @@ export class OrdensComponent implements OnInit {
     const result = await this.ordemDb.getPaged({
       skip,
       limit: this.pageSize,
-      status: 'aguardando_execucao',
+      status: 'concluida',
       search: this.searchTerm
     });
 
@@ -127,7 +127,7 @@ export class OrdensComponent implements OnInit {
 
   executarOS(os: OrdemServico) {
     // navegar para a página de execução (passa o id)
-    this.router.navigate(['/executar', os.id]);
+    this.router.navigate(['/executar', os.id, true]);
   }
 
 }

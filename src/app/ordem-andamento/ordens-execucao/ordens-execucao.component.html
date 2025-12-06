@@ -4,6 +4,11 @@
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Execução OS #{{ ordem.id }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="gerarPDF()">
+        <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
   <!-- Barra de Progresso -->
@@ -95,6 +100,18 @@
         <h2>Problemas da OS</h2>
       </div>
 
+      <div class="section-header">
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="openModalProblema()"
+          [disabled]="disabledButtons"
+          class="add-problema-btn">
+          <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+          Adicionar Problema
+        </ion-button>
+      </div>
+
       <div class="problemas-list">
         <ion-card
           *ngFor="let problema of ordem.problemas"
@@ -126,8 +143,12 @@
 
             <!-- Hora de Conclusão -->
             <div class="problema-conclusao" *ngIf="problema.concluido && problema.horaConclusao">
-              <ion-icon name="checkmark-circle" color="success"></ion-icon>
-              <span>Concluído às {{ problema.horaConclusao }}</span>
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span style="color: black;">Concluído às {{ problema.horaConclusao }}</span>
+            </div>
+
+            <div *ngIf="problema.fotoUrl" class="img-wrapper">
+              <img [src]="problema.fotoUrl" />
             </div>
 
             <!-- Ações -->
@@ -135,6 +156,7 @@
               <ion-button
                 size="small"
                 fill="clear"
+                [disabled]="disabledButtons"
                 (click)="adicionarObservacao(problema)">
                 <ion-icon slot="start" name="create-outline"></ion-icon>
                 Observação
@@ -143,6 +165,7 @@
               <ion-button
                 size="small"
                 fill="clear"
+                [disabled]="disabledButtons"
                 (click)="alterarStatusProblema(problema)">
                 <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
                 Status

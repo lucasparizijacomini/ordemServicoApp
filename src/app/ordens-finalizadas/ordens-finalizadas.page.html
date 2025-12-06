@@ -16,10 +16,6 @@
       (ionInput)="onSearchChange($event)"
       debounce="300"
     ></ion-searchbar>
-
-    <div class="counter">
-      <ion-button (click)="navegarParaCriarOrdem()" color="primary">Criar Ordem</ion-button>
-    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -40,12 +36,12 @@
           <p><strong>Atividades:</strong> {{ os.problemas.length }}</p>
         </div>
 
-        <div *ngIf="os.fotoUrl" class="img-wrapper">
+        <!-- <div *ngIf="os.fotoUrl" class="img-wrapper">
           <img [src]="os.fotoUrl" />
-        </div>
+        </div> -->
 
         <ion-button expand="block" color="primary" (click)="executarOS(os)">
-          Executar
+          Consultar
         </ion-button>
       </ion-card-content>
     </ion-card>

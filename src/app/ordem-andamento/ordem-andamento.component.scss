@@ -25,3 +25,20 @@
 }
 
 
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .pdf-btn {
+    --background: var(--ion-color-secondary);
+    margin: 0;
+  }
+
+  .finalizar-btn {
+    margin: 0;
+  }
+}
+
+

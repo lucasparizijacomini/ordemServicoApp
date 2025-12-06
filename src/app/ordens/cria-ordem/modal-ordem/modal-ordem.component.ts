@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 import { ModalController, IonicModule } from '@ionic/angular';
 
 import {
@@ -49,7 +52,8 @@ export class ModalOrdemComponent {
     id: 0,
     tipo: '',
     situacao: '',
-    observacao: ''
+    observacao: '',
+    fotoUrl: ''
   };
 
   constructor(private modalCtrl: ModalController) {
@@ -68,6 +72,37 @@ export class ModalOrdemComponent {
   // Método para definir a situação
   setSituacao(situacao: string) {
     this.problema.situacao = situacao;
+  }
+
+  async tirarFoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 85,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera
+      });
+
+      const fileName = `foto_os_${Date.now()}.jpeg`;
+
+      // Salvar no Filesystem
+      const savedFile = await Filesystem.writeFile({
+        path: fileName,
+        data: image.base64String!,
+        directory: Directory.Data
+      });
+
+      // Salvar APENAS o caminho no objeto da OS
+        const webPath = Capacitor.convertFileSrc(savedFile.uri);
+
+      // Armazena o caminho convertido
+      this.problema.fotoUrl = webPath;
+
+      console.log('Foto salva em:', webPath);
+
+    } catch (error) {
+      console.error('Erro ao tirar/salvar foto:', error);
+    }
   }
 
   // Retorna o ícone baseado na situação

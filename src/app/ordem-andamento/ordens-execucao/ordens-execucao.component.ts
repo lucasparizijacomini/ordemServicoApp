@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ToastController, ModalController } from '@ionic/angular';
 
 import {
   IonHeader,
@@ -23,6 +23,8 @@ import {
 import { addIcons } from 'ionicons';
 import { buildOutline, carSportOutline, checkboxOutline, checkmarkCircle, checkmarkCircleOutline, checkmarkDoneOutline, clipboardOutline, constructOutline, createOutline, documentTextOutline, informationCircleOutline, listOutline, locationOutline, pricetagOutline, speedometerOutline, swapHorizontalOutline, timeOutline } from 'ionicons/icons';
 import { OrdemServico, Problemas } from 'src/app/models/ordem.inteface';
+import { ModalOrdemComponent } from 'src/app/ordens/cria-ordem/modal-ordem/modal-ordem.component';
+import { PdfGeneratorService } from 'src/app/services/pdf.service';
 
 @Component({
   selector: 'app-ordens-execucao',
@@ -44,21 +46,26 @@ import { OrdemServico, Problemas } from 'src/app/models/ordem.inteface';
     IonCardContent,
     IonBadge,
     IonButton,
-  ]
+  ],
+  providers: [ModalController]
 })
 export class OrdensExecucaoComponent implements OnInit {
 
   ordem: OrdemServico = new OrdemServico();
   osId: number = 0;
+  tipo: string = '';
 
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute)
   private alertCtrl = inject(AlertController)
-  private toastCtrl = inject(ToastController)
-  private ordemDbService = inject(OrdemDbService)
+  private toastController = inject(ToastController)
+  private ordemDbService = inject(OrdemDbService);
+  private pdfGenerator = inject(PdfGeneratorService);
+  private modalCtrl = inject(ModalController);
 
   constructor() {
     this.osId = Number(this.activatedRoute.snapshot.paramMap.get('id'));
+    this.tipo = this.activatedRoute.snapshot.paramMap.get('type') ?? '';
     addIcons({
       'build-outline': buildOutline,
       'checkmark-done-outline': checkmarkDoneOutline,
@@ -80,6 +87,14 @@ export class OrdensExecucaoComponent implements OnInit {
     });
   }
 
+  get disabledButtons(): boolean {
+    if(this.tipo === 'false'){
+      return false;
+    }
+
+    return true
+  }
+
   ngOnInit() {
     if (this.osId) {
       this.carregarOS(this.osId);
@@ -95,9 +110,11 @@ export class OrdensExecucaoComponent implements OnInit {
       return;
     }
 
-    this.ordem.status = 'em_execucao';
-    this.ordem.dataInicio = new Date().toLocaleTimeString('pt-BR');
-    this.ordemDbService.update(this.ordem)
+    if(this.tipo === 'false'){
+      this.ordem.status = 'em_execucao';
+      this.ordem.dataInicio = new Date().toLocaleTimeString('pt-BR');
+      this.ordemDbService.update(this.ordem)
+    }
     console.log('Carregando OS:', id);
   }
 
@@ -153,6 +170,22 @@ export class OrdensExecucaoComponent implements OnInit {
     return this.ordem.status === 'concluida' ||
           !this.ordem.problemas.every(el => el.situacao === 'concluido');
   }
+
+   async openModalProblema() {
+      const modal = await this.modalCtrl.create({
+        component: ModalOrdemComponent
+      });
+
+      await modal.present();
+
+      const { data } = await modal.onWillDismiss();
+
+      if (data) {
+        // Gera um ID único para o problema
+        data.id = this.ordem.problemas.length + 1;
+        this.ordem.problemas.push(data);
+      }
+    }
 
 
   // Adicionar observação ao problema
@@ -227,7 +260,7 @@ export class OrdensExecucaoComponent implements OnInit {
   }
 
   async mostrarToast(message: string, color: string) {
-    const toast = await this.toastCtrl.create({
+    const toast = await this.toastController.create({
       message,
       duration: 2000,
       color,
@@ -284,4 +317,24 @@ export class OrdensExecucaoComponent implements OnInit {
   getTipoManutencaoLabel(): string {
     return this.ordem.tipoManutencao === '1' ? 'Corretiva' : 'Preventiva';
   }
+
+  async gerarPDF() {
+    try {
+      await this.pdfGenerator.gerarPdfOS(this.ordem);
+      await this.mostrarToast('PDF gerado com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      await this.mostrarToast('Erro ao gerar PDF. Tente novamente.', 'danger');
+    }
+  }
+
+  /**
+   * Compartilha o PDF
+   */
+  async compartilharPDF() {
+    // Você pode implementar compartilhamento via Capacitor Share API
+    // ou gerar e baixar o PDF
+    await this.gerarPDF();
+  }
+
 }
