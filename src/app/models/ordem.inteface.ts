@@ -2,7 +2,7 @@ export class OrdemServico implements IOrdemServico {
 
   id?: number;
   modelo: string;
-  frota: string;
+  frota: number;
   hodometro: string;
   local: string;
   tipoManutencao: string;
@@ -17,7 +17,7 @@ export class OrdemServico implements IOrdemServico {
 
   constructor(){
     this.modelo = '';
-    this.frota = '';
+    this.frota = 0;
     this.hodometro = '';
     this.local = '';
     this.tipoManutencao = '1';
@@ -34,7 +34,7 @@ export class OrdemServico implements IOrdemServico {
 export interface IOrdemServico {
   id?: number;
   modelo: string;
-  frota: string;
+  frota: number;
   hodometro: string;
   operador: string;
   local: string;

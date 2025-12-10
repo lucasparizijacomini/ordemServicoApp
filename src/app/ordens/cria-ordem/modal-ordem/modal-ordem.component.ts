@@ -51,7 +51,7 @@ export class ModalOrdemComponent {
    problema: Problemas = {
     id: 0,
     tipo: '',
-    situacao: '',
+    situacao: 'pendente',
     observacao: '',
     fotoUrl: ''
   };

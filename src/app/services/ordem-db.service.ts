@@ -304,7 +304,7 @@ export class OrdemDbService {
       const term = opts.search.toLowerCase();
       arr = arr.filter(o =>
         (o.modelo || '').toLowerCase().includes(term) ||
-        (o.frota || '').toLowerCase().includes(term) ||
+        ((o.frota.toString() || '')).toLowerCase().includes(term) ||
         (o.local || '').toLowerCase().includes(term) ||
         (o.operador || '').toLowerCase().includes(term)
       );

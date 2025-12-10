@@ -6,7 +6,6 @@ import { Platform } from '@ionic/angular';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -18,7 +17,8 @@ export class PdfGeneratorService {
    * Gera PDF da Ordem de Serviço
    */
   async gerarPdfOS(ordem: any): Promise<void> {
-    const doc = this.criarPDF(ordem);
+    // agora criamos o PDF assincronamente
+    const doc = await this.criarPDF(ordem);
     const nomeArquivo = `OS_${ordem.id}.pdf`;
 
     // Verifica se é mobile ou web
@@ -33,8 +33,9 @@ export class PdfGeneratorService {
 
   /**
    * Cria o documento PDF
+   * note: agora é async para suportar carregamento de imagens
    */
-  private criarPDF(ordem: any): jsPDF {
+  private async criarPDF(ordem: any): Promise<jsPDF> {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     let yPosition = 20;
@@ -59,7 +60,6 @@ export class PdfGeneratorService {
                    ordem.status === 'concluida' ? 'Concluída' : 'Pausada';
     const statusColor: [number, number, number] = ordem.status === 'concluida' ? [76, 175, 80] : [63, 81, 181];
 
-
     doc.setFillColor(...statusColor);
     doc.roundedRect(pageWidth - 50, yPosition - 5, 40, 8, 2, 2, 'F');
     doc.setTextColor(255, 255, 255);
@@ -75,14 +75,12 @@ export class PdfGeneratorService {
     doc.text('Informações da OS', 15, yPosition);
     yPosition += 8;
 
-    console.log("ordem", ordem)
-
     const infos = [
-      ['Modelo:', ordem.modelo.toString()],
-      ['Frota:', ordem.frota.toString()],
-      ['Hodômetro:', `${ordem.hodometro.toString()} km`],
-      ['Local:', ordem.local.toString()],
-      ['Tipo:', this.getTipoManutencao(ordem.tipoManutencao.toString())],
+      ['Modelo:', ordem.modelo?.toString() ?? '-'],
+      ['Frota:', ordem.frota?.toString() ?? '-'],
+      ['Hodômetro:', `${ordem.hodometro?.toString() ?? '-'} km`],
+      ['Local:', ordem.local?.toString() ?? '-'],
+      ['Tipo:', this.getTipoManutencao(String(ordem.tipoManutencao ?? ''))],
       ['Data Abertura:', this.formatarData(ordem.dataAbertura)]
     ];
 
@@ -90,20 +88,18 @@ export class PdfGeneratorService {
     doc.setFont('helvetica', 'normal');
 
     infos.forEach(([label, value]) => {
-      console.log("label", label)
-      console.log("value", value)
       doc.setFont('helvetica', 'bold');
-      doc.text(label, 15, yPosition);
+      doc.text(String(label), 15, yPosition);
       doc.setFont('helvetica', 'normal');
-      doc.text(value, 55, yPosition);
+      doc.text(String(value), 55, yPosition);
       yPosition += 7;
     });
 
     yPosition += 5;
 
     // ===== PROGRESSO =====
-    const problemasConcluidos = ordem.problemas.filter((p: any) => p.concluido).length;
-    const totalProblemas = ordem.problemas.length;
+    const problemasConcluidos = ordem.problemas?.filter((p: any) => p.concluido).length ?? 0;
+    const totalProblemas = ordem.problemas?.length ?? 0;
     const progresso = totalProblemas > 0 ? (problemasConcluidos / totalProblemas * 100) : 0;
 
     doc.setFont('helvetica', 'bold');
@@ -126,61 +122,129 @@ export class PdfGeneratorService {
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('Problemas da OS', 15, yPosition);
-    yPosition += 5;
+    yPosition += 8;
 
-    if (ordem.problemas.length === 0) {
+    if (!ordem.problemas || ordem.problemas.length === 0) {
       yPosition += 10;
       doc.setFontSize(10);
       doc.setFont('helvetica', 'italic');
       doc.setTextColor(128, 128, 128);
       doc.text('Nenhum problema registrado', 15, yPosition);
+      yPosition += 10;
     } else {
-      const tableData = ordem.problemas.map((p: any, index: number) => {
+      // Em vez de usar autoTable para problemas, desenhamos cada problema e, em seguida, sua(s) imagem(ns)
+      doc.setFontSize(12);
+      doc.setTextColor(0,0,0);
+
+      for (let i = 0; i < ordem.problemas.length; i++) {
+        const p = ordem.problemas[i];
+
+        // Quebra de página preventiva
+        const pageHeight = doc.internal.pageSize.getHeight();
+        if (yPosition > pageHeight - 120) {
+          doc.addPage();
+          yPosition = 20;
+        }
+
+        // Cabeçalho do problema
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${i + 1}. ${p.tipo || 'Problema'}`, 15, yPosition);
+        yPosition += 7;
+
+        // Situação / Observação / Hora conclusão
+        doc.setFont('helvetica', 'normal');
         const situacao = p.situacao === 'em_andamento' ? 'Em Andamento' :
                         p.situacao === 'pendente' ? 'Pendente' : 'Concluído';
+        doc.text(`Situação: ${situacao}`, 20, yPosition);
+        yPosition += 7;
 
-        return [
-          (index + 1).toString(),
-          p.tipo,
-          situacao,
-          p.observacao || '-',
-          p.concluido && p.horaConclusao ? p.horaConclusao : '-'
-        ];
-      });
-
-      autoTable(doc, {
-        startY: yPosition,
-        head: [['#', 'Tipo', 'Status', 'Observação', 'Conclusão']],
-        body: tableData,
-        theme: 'striped',
-        headStyles: {
-          fillColor: [63, 81, 181],
-          textColor: 255,
-          fontStyle: 'bold'
-        },
-        styles: {
-          fontSize: 9,
-          cellPadding: 3
-        },
-        columnStyles: {
-          0: { cellWidth: 10 },
-          1: { cellWidth: 40 },
-          2: { cellWidth: 30 },
-          3: { cellWidth: 60 },
-          4: { cellWidth: 35 }
+        if (p.observacao) {
+          // texto longo quebrado em linhas
+          const obsLines = doc.splitTextToSize(`Observação: ${p.observacao}`, pageWidth - 40);
+          doc.text(obsLines, 20, yPosition);
+          yPosition += obsLines.length * 7;
         }
-      });
+
+        const hora = (p.concluido && p.horaConclusao) ? p.horaConclusao : '-';
+        doc.text(`Conclusão: ${hora}`, 20, yPosition);
+        yPosition += 8;
+
+        // Se existir foto(s) no problema, carregar e inserir aqui
+        // suportamos um único campo p.fotoUrl (string) ou p.fotos (array)
+        const fotos: string[] = [];
+        if (p.fotoUrl) fotos.push(p.fotoUrl);
+        if (Array.isArray(p.fotos)) fotos.push(...p.fotos);
+
+        for (const fotoUrl of fotos) {
+          if (!fotoUrl) continue;
+
+          // tenta carregar base64 (se falhar, pula)
+          let imgBase64: string | null = null;
+          try {
+            imgBase64 = await this.carregarImagemBase64(fotoUrl);
+          } catch (e) {
+            console.warn('Não foi possível carregar imagem:', fotoUrl, e);
+            imgBase64 = null;
+          }
+
+          if (!imgBase64) continue;
+
+          // calcula dimensões mantendo proporção
+          // vamos usar máxima largura com margem e máximo de altura razoável
+          const maxWidth = pageWidth - 30; // margem 15px cada lado
+          const maxHeight = 160;
+
+          // cria img temporária para pegar dimensões reais
+          const img = new Image();
+          img.src = imgBase64;
+          await new Promise<void>((res) => {
+            img.onload = () => res();
+            img.onerror = () => res();
+          });
+
+          let imgW = img.width || maxWidth;
+          let imgH = img.height || maxHeight;
+          const ratio = imgW / imgH;
+
+          if (imgW > maxWidth) {
+            imgW = maxWidth;
+            imgH = imgW / ratio;
+          }
+          if (imgH > maxHeight) {
+            imgH = maxHeight;
+            imgW = imgH * ratio;
+          }
+
+          // quebra de página se não couber
+          const pageHeightNow = doc.internal.pageSize.getHeight();
+          if (yPosition + imgH > pageHeightNow - 30) {
+            doc.addPage();
+            yPosition = 20;
+          }
+
+          // inserir imagem
+          try {
+            doc.addImage(imgBase64, 'JPEG', 15, yPosition, imgW, imgH, undefined, 'FAST');
+            yPosition += imgH + 10;
+          } catch (e) {
+            console.warn('Erro ao inserir imagem no PDF:', e);
+          }
+        } // end fotos loop
+
+        // espaço entre problemas
+        yPosition += 6;
+      } // end problemas loop
     }
 
     // ===== RODAPÉ =====
-    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageHeightFinal = doc.internal.pageSize.getHeight();
     doc.setFontSize(8);
     doc.setTextColor(128, 128, 128);
     doc.setFont('helvetica', 'italic');
     doc.text(
       `Documento gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`,
       pageWidth / 2,
-      pageHeight - 10,
+      pageHeightFinal - 10,
       { align: 'center' }
     );
 
@@ -220,10 +284,41 @@ export class PdfGeneratorService {
   }
 
   /**
+   * Converte uma URL de imagem em base64 (funciona em web; em mobile se usar file:// ou content:// pode ser necessário adaptar)
+   */
+  private async carregarImagemBase64(url: string): Promise<string | null> {
+    try {
+      // suporte básico para caminhos locais do capacitor/file system
+      if (url.startsWith('file://') || url.startsWith('content://') || url.startsWith('capacitor://')) {
+        // tenta ler diretamente (pode precisar ajustar dependendo de como você guarda as imagens)
+        const read = await Filesystem.readFile({ path: url }).catch(() => null);
+        if (read && (read as any).data) {
+          return `data:image/jpeg;base64,${(read as any).data}`;
+        }
+        // fallback: tenta fetch normalmente
+      }
+
+      // tenta fetch normalmente (funciona para URLs públicas HTTPS)
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const blob = await response.blob();
+
+      return await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      console.error('Erro ao carregar imagem:', e);
+      return null;
+    }
+  }
+
+  /**
    * Formata data para exibição
    */
   private formatarData(data: any): string {
-    console.log("data", data)
     if (!data) return '-';
     const d = new Date(data);
     return d.toLocaleDateString('pt-BR', {
@@ -238,7 +333,6 @@ export class PdfGeneratorService {
    * Retorna label do tipo de manutenção
    */
   private getTipoManutencao(tipo: string): string {
-    console.log("tipo", tipo)
     const tipos: any = {
       '1': 'Preventiva',
       '2': 'Corretiva',

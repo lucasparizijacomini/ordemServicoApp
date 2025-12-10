@@ -52,8 +52,10 @@
           <p><strong>Atividades:</strong> {{ os.problemas.length }}</p>
         </div>
 
-        <div *ngIf="os.fotoUrl" class="img-wrapper">
-          <img [src]="os.fotoUrl" />
+        <div *ngIf="os.problemas.length" class="problemas-imagens">
+          <div class="img-grid">
+            <img *ngFor="let p of os.problemas" [src]="p.fotoUrl" />
+          </div>
         </div>
 
         <ion-button expand="block" color="primary" (click)="executarOS(os)">
