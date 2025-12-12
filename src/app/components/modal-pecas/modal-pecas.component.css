@@ -1,0 +1,16 @@
+.pecas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.pecas-table th,
+.pecas-table td {
+  border-bottom: 1px solid #ccc;
+  padding: 8px;
+}
+
+.pecas-table th {
+  background: #f0f0f0;
+  font-weight: bold;
+}

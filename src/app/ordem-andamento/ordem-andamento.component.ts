@@ -46,7 +46,7 @@ export class OrdemAndamentoComponent  implements OnInit {
   finished = false;
 
   // filtros / busca
-  searchTerm = '';
+  searchTerm: string = '';
   filtroTipo: string | undefined; // '1' or '2' or undefined
 
   totalCount = 0; // total de ordens que batem no filtro (para contador)

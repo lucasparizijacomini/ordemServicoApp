@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Peças Utilizadas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Fechar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Formulário de Adição -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Adicionar Peça</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Descrição</ion-label>
+        <ion-input [(ngModel)]="novaPeca.descricao" placeholder="Ex: Filtro de óleo"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Quantidade</ion-label>
+        <ion-input type="number" [(ngModel)]="novaPeca.quantidade"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" color="success" (click)="adicionarPeca()">
+        Adicionar
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-button expand="block" color="primary" (click)="finalizar()"
+      [disabled]="pecas.length === 0">
+      Salvar Peças
+    </ion-button>
+  </ion-card>
+
+
+
+  <!-- Tabela de Peças -->
+  <ion-card *ngIf="pecas.length > 0">
+    <ion-card-header>
+      <ion-card-title>Peças Adicionadas</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <table class="pecas-table">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Qtd</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let p of pecas">
+            <td>{{ p.descricao }}</td>
+            <td>{{ p.quantidade }}</td>
+            <td>
+              <ion-button color="danger" size="small" (click)="removerPeca(p)">
+                Remover
+              </ion-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </ion-card-content>
+  </ion-card>
+</ion-content>

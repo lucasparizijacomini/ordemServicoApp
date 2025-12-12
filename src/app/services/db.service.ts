@@ -26,16 +26,6 @@ export class DbService {
       request.onupgradeneeded = (event: any) => {
         const db = event.target.result;
 
-        // // Criar store de clientes
-        // if (!db.objectStoreNames.contains('clientes')) {
-        //   const clientesStore = db.createObjectStore('clientes', {
-        //     keyPath: 'id',
-        //     autoIncrement: true
-        //   });
-        //   clientesStore.createIndex('nome', 'nome', { unique: false });
-        //   clientesStore.createIndex('telefone', 'telefone', { unique: false });
-        // }
-
         // Criar store de ordens
         if (!db.objectStoreNames.contains('ordens')) {
           const ordensStore = db.createObjectStore('ordens', {
@@ -50,55 +40,6 @@ export class DbService {
       };
     });
   }
-
-  // ========== CLIENTES ==========
-  // async addCliente(cliente: Cliente): Promise<number> {
-  //   const db = await this.getDB();
-  //   return new Promise((resolve, reject) => {
-  //     const transaction = db.transaction(['clientes'], 'readwrite');
-  //     const store = transaction.objectStore('clientes');
-  //     const request = store.add(cliente);
-
-  //     request.onsuccess = () => resolve(request.result as number);
-  //     request.onerror = () => reject(request.error);
-  //   });
-  // }
-
-  // async getAllClientes(): Promise<Cliente[]> {
-  //   const db = await this.getDB();
-  //   return new Promise((resolve, reject) => {
-  //     const transaction = db.transaction(['clientes'], 'readonly');
-  //     const store = transaction.objectStore('clientes');
-  //     const request = store.getAll();
-
-  //     request.onsuccess = () => resolve(request.result);
-  //     request.onerror = () => reject(request.error);
-  //   });
-  // }
-
-  // async updateCliente(cliente: Cliente): Promise<number> {
-  //   const db = await this.getDB();
-  //   return new Promise((resolve, reject) => {
-  //     const transaction = db.transaction(['clientes'], 'readwrite');
-  //     const store = transaction.objectStore('clientes');
-  //     const request = store.put(cliente);
-
-  //     request.onsuccess = () => resolve(request.result as number);
-  //     request.onerror = () => reject(request.error);
-  //   });
-  // }
-
-  // async deleteCliente(id: number): Promise<void> {
-  //   const db = await this.getDB();
-  //   return new Promise((resolve, reject) => {
-  //     const transaction = db.transaction(['clientes'], 'readwrite');
-  //     const store = transaction.objectStore('clientes');
-  //     const request = store.delete(id);
-
-  //     request.onsuccess = () => resolve();
-  //     request.onerror = () => reject(request.error);
-  //   });
-  // }
 
   // ========== ORDENS ==========
   async addOrdem(ordem: OrdemServico): Promise<number> {

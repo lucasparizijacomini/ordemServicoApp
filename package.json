@@ -1,5 +1,5 @@
 {
-  "name": "ordemServicoApp",
+  "name": "ordemServico",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -30,12 +30,14 @@
     "@capacitor/haptics": "7.0.2",
     "@capacitor/keyboard": "7.0.3",
     "@capacitor/share": "^7.0.2",
-    "@capacitor/status-bar": "7.0.3",
+    "@capacitor/status-bar": "^7.0.3",
+    "@capawesome/capacitor-photo-editor": "^7.0.1",
     "@ionic/angular": "^8.0.0",
     "idb": "^8.0.3",
     "ionicons": "^7.4.0",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
+    "painterro": "^1.2.92",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -69,5 +71,6 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.9.0"
   },
-  "description": "An Ionic project"
+  "description": "Projeto de Ordem de Serviço com Ionic Angular",
+  "displayName": "Ordem Serviço"
 }

@@ -1,3 +1,5 @@
+import { IPeca } from "../components/modal-pecas/modal-pecas.component";
+
 export class OrdemServico implements IOrdemServico {
 
   id?: number;
@@ -30,7 +32,6 @@ export class OrdemServico implements IOrdemServico {
 
 }
 
-
 export interface IOrdemServico {
   id?: number;
   modelo: string;
@@ -51,10 +52,16 @@ export interface Problemas {
   id: number;
   tipo: string;
   situacao: string;
-  observacao: string;
+  observacao: IObservacoes[];
+  pecas: IPeca[];
   concluido?: boolean;
   fotoUrl: string;
   horaConclusao?: string;
+}
+
+export interface IObservacoes {
+  id: number;
+  descricaoObservacao: string
 }
 
 

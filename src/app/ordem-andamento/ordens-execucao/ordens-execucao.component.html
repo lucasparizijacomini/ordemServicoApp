@@ -87,7 +87,7 @@
           <ion-icon name="time-outline"></ion-icon>
           <div>
             <span class="info-label">Início</span>
-            <span class="info-value">{{ ordem.dataInicio | date:'dd/MM HH:mm' }}</span>
+            <span class="info-value">{{ ordem.dataInicio }}</span>
           </div>
         </div>
       </div>
@@ -123,7 +123,7 @@
             <!-- Header com Checkbox -->
             <div class="problema-header">
               <div class="problema-info-header">
-                <h3 [class.riscado]="problema.concluido">{{ problema.tipo }}</h3>
+                <h3>{{ problema.tipo }}</h3>
                 <ion-badge
                   [color]="getStatusColor(problema.situacao)"
                   (click)="alterarStatusProblema(problema)"
@@ -135,10 +135,40 @@
               </div>
             </div>
 
-            <!-- Observação -->
-            <div class="problema-observacao" *ngIf="problema.observacao">
-              <ion-icon name="document-text-outline"></ion-icon>
-              <p [class.riscado]="problema.concluido">{{ problema.observacao }}</p>
+            <!-- Lista de Observações -->
+            <div class="observacoes-container" *ngIf="problema.observacao.length > 0">
+              <h2>Observações</h2>
+              <div
+                class="observacao-item"
+                *ngFor="let obs of problema.observacao; let i = index">
+
+                <div class="observacao-info">
+                  <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+                  <p class="observacao-text">
+                    {{ obs.descricaoObservacao }}
+                  </p>
+                </div>
+
+                <ion-buttons class="observacao-actions">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="medium"
+                    (click)="editarObservacao(problema, obs)">
+                    <ion-icon name="create-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removerObservacao(problema, obs)">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+
+              </div>
+
             </div>
 
             <!-- Hora de Conclusão -->
@@ -169,6 +199,15 @@
                 (click)="alterarStatusProblema(problema)">
                 <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
                 Status
+              </ion-button>
+
+              <ion-button
+                size="small"
+                fill="clear"
+                [disabled]="disabledButtons"
+                (click)="abrirModalPecas(problema)">
+                <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
+                Peças
               </ion-button>
             </div>
           </ion-card-content>

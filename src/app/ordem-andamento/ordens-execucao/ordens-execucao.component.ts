@@ -21,8 +21,9 @@ import {
   AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { buildOutline, carSportOutline, checkboxOutline, checkmarkCircle, checkmarkCircleOutline, checkmarkDoneOutline, clipboardOutline, constructOutline, createOutline, documentTextOutline, informationCircleOutline, listOutline, locationOutline, pricetagOutline, speedometerOutline, swapHorizontalOutline, timeOutline } from 'ionicons/icons';
-import { OrdemServico, Problemas } from 'src/app/models/ordem.inteface';
+import { addCircleOutline, buildOutline, carSportOutline, chatboxEllipsesOutline, checkboxOutline, checkmarkCircle, checkmarkCircleOutline, checkmarkDoneOutline, clipboardOutline, constructOutline, createOutline, documentTextOutline, informationCircleOutline, listOutline, locationOutline, pricetagOutline, speedometerOutline, swapHorizontalOutline, timeOutline, trashOutline } from 'ionicons/icons';
+import { IPeca, ModalPecasComponent } from 'src/app/components/modal-pecas/modal-pecas.component';
+import { IObservacoes, OrdemServico, Problemas } from 'src/app/models/ordem.inteface';
 import { ModalOrdemComponent } from 'src/app/ordens/cria-ordem/modal-ordem/modal-ordem.component';
 import { PdfGeneratorService } from 'src/app/services/pdf.service';
 
@@ -54,6 +55,7 @@ export class OrdensExecucaoComponent implements OnInit {
   ordem: OrdemServico = new OrdemServico();
   osId: number = 0;
   tipo: string = '';
+  pecas: IPeca[] = [];
 
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute)
@@ -83,7 +85,10 @@ export class OrdensExecucaoComponent implements OnInit {
       'construct-outline': constructOutline,
       'clipboard-outline': clipboardOutline,
       'checkmark-circle': checkmarkCircle,
-      'checkmark-circle-outline': checkmarkCircleOutline
+      'checkmark-circle-outline': checkmarkCircleOutline,
+      'add-circle-outline': addCircleOutline,
+      'trash-outline': trashOutline,
+      'chatbox-ellipses-outline': chatboxEllipsesOutline
     });
   }
 
@@ -99,6 +104,29 @@ export class OrdensExecucaoComponent implements OnInit {
     if (this.osId) {
       this.carregarOS(this.osId);
     }
+  }
+
+  async abrirModalPecas(problema: Problemas) {
+
+    if(!problema.pecas){
+      problema.pecas = [];
+    }
+
+    const modal = await this.modalCtrl.create({
+      component: ModalPecasComponent,
+      componentProps: {
+        pecas: problema.pecas
+      }
+    });
+
+    modal.onDidDismiss().then(result => {
+      if (result.data) {
+        problema.pecas = result.data; // Atualiza lista após salvar
+        this.ordemDbService.atualizarProblema(this.osId, problema.id, problema);
+      }
+    });
+
+    await modal.present();
   }
 
   async carregarOS(id: number) {
@@ -171,22 +199,22 @@ export class OrdensExecucaoComponent implements OnInit {
           !this.ordem.problemas.every(el => el.situacao === 'concluido');
   }
 
-   async openModalProblema() {
-      const modal = await this.modalCtrl.create({
-        component: ModalOrdemComponent
-      });
+  async openModalProblema() {
+    const modal = await this.modalCtrl.create({
+      component: ModalOrdemComponent
+    });
 
-      await modal.present();
+    await modal.present();
 
-      const { data } = await modal.onWillDismiss();
+    const { data } = await modal.onWillDismiss();
 
-      if (data) {
-        // Gera um ID único para o problema
-        data.id = this.ordem.problemas.length + 1;
-        this.ordem.problemas.push(data);
-      }
+    if (data) {
+      // Gera um ID único para o problema
+      data.id = this.ordem.problemas.length + 1;
+      this.ordem.problemas.push(data);
+      this.ordemDbService.update(this.ordem)
     }
-
+  }
 
   // Adicionar observação ao problema
   async adicionarObservacao(problema: Problemas) {
@@ -197,8 +225,7 @@ export class OrdensExecucaoComponent implements OnInit {
         {
           name: 'observacao',
           type: 'textarea',
-          placeholder: 'Digite a observação...',
-          value: problema.observacao
+          placeholder: 'Digite a observação...'
         }
       ],
       buttons: [
@@ -208,9 +235,32 @@ export class OrdensExecucaoComponent implements OnInit {
         },
         {
           text: 'Salvar',
-          handler: (data) => {
-            problema.observacao = data.observacao;
+          handler: async (data) => {
+
+            // Impede salvar observação vazia
+            if (!data.observacao || data.observacao.trim().length === 0) {
+              this.mostrarToast('Digite uma observação.', 'warning');
+              return false;
+            }
+
+            // Cria objeto de observação
+            const novaObs: IObservacoes = {
+              id: problema.observacao.length + 1,
+              descricaoObservacao: data.observacao.trim()
+            };
+
+            if(!problema.observacao){
+              problema.observacao = [];
+            }
+
+            // Adiciona no array
+            problema.observacao.push(novaObs);
+
+            // Salva no banco
+            await this.ordemDbService.atualizarProblema(this.osId, problema.id, problema);
+
             this.mostrarToast('Observação salva!', 'success');
+            return true;
           }
         }
       ]
@@ -218,6 +268,61 @@ export class OrdensExecucaoComponent implements OnInit {
 
     await alert.present();
   }
+
+  async editarObservacao(problema: Problemas, observacao: IObservacoes) {
+    const alert = await this.alertCtrl.create({
+      header: 'Editar Observação',
+      inputs: [
+        {
+          name: 'observacao',
+          type: 'textarea',
+          value: observacao.descricaoObservacao
+        }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Salvar',
+          handler: async (data: any) => {
+            observacao.descricaoObservacao = data.observacao;
+
+            await this.ordemDbService.atualizarProblema(this.osId, problema.id, problema);
+
+            this.mostrarToast('Observação atualizada!', 'success');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async removerObservacao(problema: Problemas, observacao: IObservacoes) {
+    const alert = await this.alertCtrl.create({
+      header: 'Excluir Observação?',
+      message: 'Deseja realmente remover esta observação?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Excluir',
+          role: 'destructive',
+          handler: async () => {
+            problema.observacao = problema.observacao.filter(o => o.id !== observacao.id);
+
+            await this.ordemDbService.atualizarProblema(this.osId, problema.id, problema);
+
+            this.mostrarToast('Observação removida.', 'danger');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 
   // Verifica se todos problemas foram concluídos
   verificarConclusaoTotal() {

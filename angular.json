@@ -35,8 +35,13 @@
                 "output": "assets"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": [],
+            "styles": [
+              "src/global.scss",
+              "src/theme/variables.scss"
+            ],
+            "scripts": [
+              "node_modules/painterro/build/painterro.min.js"
+            ],
             "browser": "src/main.ts"
           },
           "configurations": {

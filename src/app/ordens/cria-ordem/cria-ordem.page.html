@@ -41,7 +41,7 @@
           </ion-input>
         </ion-item>
 
-        <ion-item lines="none">
+        <ion-item lines="full">
           <ion-input
             label="Hodômetro (km) *"
             labelPlacement="floating"
@@ -49,6 +49,17 @@
             [(ngModel)]="ordem.hodometro"
             name="hodometro"
             type="number"
+            required>
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-input
+            label="Operador "
+            labelPlacement="floating"
+            placeholder="Ex: Operador 1"
+            [(ngModel)]="ordem.operador"
+            name="operador"
             required>
           </ion-input>
         </ion-item>

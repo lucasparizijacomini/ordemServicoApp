@@ -319,6 +319,48 @@ ion-progress-bar {
   object-fit: contain;
 }
 
+.observacoes-container {
+  margin-top: 12px;
+  border-top: 1px solid #dcdcdc;
+  padding-top: 10px;
+}
+
+.observacao-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.observacao-info {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-grow: 1;
+
+  ion-icon {
+    font-size: 20px;
+    color: #444;
+  }
+
+  .observacao-text {
+    margin: 0;
+    line-height: 1.3;
+    font-size: 14px;
+    color: #222;
+  }
+}
+
+.observacao-actions ion-button {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+
 
 // Responsividade
 @media (min-width: 768px) {

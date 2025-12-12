@@ -135,7 +135,8 @@ export class CriaOrdemComponent {
     this.ordem.problemas.push({
       id: 0,
       tipo: '',
-      observacao: '',
+      observacao: [],
+      pecas: [],
       situacao: '',
       fotoUrl: ''
     });

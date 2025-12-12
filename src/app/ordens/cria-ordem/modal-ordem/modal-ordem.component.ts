@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+
 
 import {
   IonHeader,
@@ -21,8 +22,9 @@ import {
   IonLabel
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { buildOutline, flagOutline, timeOutline } from 'ionicons/icons';
+import { buildOutline, cameraOutline, close, flagOutline, saveOutline, timeOutline } from 'ionicons/icons';
 import { Problemas } from 'src/app/models/ordem.inteface';
+import { PhotoEditor } from '@capawesome/capacitor-photo-editor';
 
 @Component({
   selector: 'app-modal-ordem',
@@ -52,7 +54,8 @@ export class ModalOrdemComponent {
     id: 0,
     tipo: '',
     situacao: 'pendente',
-    observacao: '',
+    observacao: [],
+    pecas: [],
     fotoUrl: ''
   };
 
@@ -60,7 +63,11 @@ export class ModalOrdemComponent {
     addIcons({
       'flag-outline': flagOutline,
       'time-outline': timeOutline,
-      'build-outline': buildOutline
+      'build-outline': buildOutline,
+      'close': close,
+      'camera-outline': cameraOutline,
+      'save-outline': saveOutline
+
     })
   }
 
@@ -75,35 +82,44 @@ export class ModalOrdemComponent {
   }
 
   async tirarFoto() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 85,
-        allowEditing: false,
-        resultType: CameraResultType.Base64,
-        source: CameraSource.Camera
-      });
+  try {
+    const image = await Camera.getPhoto({
+      quality: 85,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera
+    });
 
-      const fileName = `foto_os_${Date.now()}.jpeg`;
+    const fileName = `foto_os_${Date.now()}.jpeg`;
 
-      // Salvar no Filesystem
-      const savedFile = await Filesystem.writeFile({
-        path: fileName,
-        data: image.base64String!,
-        directory: Directory.Data
-      });
+    // Passo 1: Salvar em diretório PÚBLICO
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: image.base64String!,
+      directory: Directory.Documents
+    });
 
-      // Salvar APENAS o caminho no objeto da OS
-        const webPath = Capacitor.convertFileSrc(savedFile.uri);
+    // Caminho nativo para o android (editor)
+    const nativePath = savedFile.uri;
 
-      // Armazena o caminho convertido
-      this.problema.fotoUrl = webPath;
+    // Caminho convertido para exibir no HTML
+    const webPath = Capacitor.convertFileSrc(savedFile.uri);
 
-      console.log('Foto salva em:', webPath);
+    // Passo 2: Editar a imagem (somente nativePath)
+    await PhotoEditor.editPhoto({
+      path: nativePath
+    });
 
-    } catch (error) {
-      console.error('Erro ao tirar/salvar foto:', error);
-    }
+    // Armazenar para exibir a foto no card
+    this.problema.fotoUrl = webPath;
+
+    console.log('Foto salva em:', webPath);
+
+  } catch (error) {
+    console.error('Erro ao tirar/salvar foto:', error);
   }
+}
+
 
   // Retorna o ícone baseado na situação
   getStatusIcon(): string {

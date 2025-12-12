@@ -40,7 +40,6 @@ import { NgIf } from '@angular/common';
     IonContent,
     IonButtons,
     IonMenuButton,
-    IonButton,
     IonIcon,
     IonGrid,
     IonRow,
