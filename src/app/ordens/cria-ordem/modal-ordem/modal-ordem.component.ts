@@ -6,7 +6,6 @@ import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { ModalController } from '@ionic/angular';
 
-
 import {
   IonHeader,
   IonToolbar,
@@ -19,10 +18,17 @@ import {
   IonIcon,
   IonCard,
   IonCardContent,
-  IonLabel
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { buildOutline, cameraOutline, close, flagOutline, saveOutline, timeOutline } from 'ionicons/icons';
+import {
+  buildOutline,
+  cameraOutline,
+  close,
+  flagOutline,
+  saveOutline,
+  timeOutline,
+} from 'ionicons/icons';
 import { Problemas } from 'src/app/models/ordem.inteface';
 import { PhotoEditor } from '@capawesome/capacitor-photo-editor';
 
@@ -45,18 +51,17 @@ import { PhotoEditor } from '@capawesome/capacitor-photo-editor';
     IonIcon,
     IonCard,
     IonCardContent,
-    IonLabel
-  ]
+    IonLabel,
+  ],
 })
 export class ModalOrdemComponent {
-
-   problema: Problemas = {
+  problema: Problemas = {
     id: 0,
     tipo: '',
     situacao: 'pendente',
     observacao: [],
     pecas: [],
-    fotoUrl: ''
+    fotoUrl: '',
   };
 
   constructor(private modalCtrl: ModalController) {
@@ -64,11 +69,10 @@ export class ModalOrdemComponent {
       'flag-outline': flagOutline,
       'time-outline': timeOutline,
       'build-outline': buildOutline,
-      'close': close,
+      close: close,
       'camera-outline': cameraOutline,
-      'save-outline': saveOutline
-
-    })
+      'save-outline': saveOutline,
+    });
   }
 
   // Método para fechar o modal
@@ -82,51 +86,48 @@ export class ModalOrdemComponent {
   }
 
   async tirarFoto() {
-  try {
-    const image = await Camera.getPhoto({
-      quality: 85,
-      allowEditing: false,
-      resultType: CameraResultType.Base64,
-      source: CameraSource.Camera
-    });
+    try {
+      const image = await Camera.getPhoto({
+        quality: 85,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera,
+      });
 
-    const fileName = `foto_os_${Date.now()}.jpeg`;
+      const fileName = `foto_os_${Date.now()}.jpeg`;
 
-    // Passo 1: Salvar em diretório PÚBLICO
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: image.base64String!,
-      directory: Directory.Documents
-    });
+      const savedFile = await Filesystem.writeFile({
+        path: fileName,
+        data: image.base64String!,
+        directory: Directory.Documents,
+      });
 
-    // Caminho nativo para o android (editor)
-    const nativePath = savedFile.uri;
+      const nativePath = savedFile.uri; // file://...
+      const webPath = Capacitor.convertFileSrc(savedFile.uri);
 
-    // Caminho convertido para exibir no HTML
-    const webPath = Capacitor.convertFileSrc(savedFile.uri);
+      await PhotoEditor.editPhoto({
+        path: nativePath,
+      });
 
-    // Passo 2: Editar a imagem (somente nativePath)
-    await PhotoEditor.editPhoto({
-      path: nativePath
-    });
+      // 🔴 MUITO IMPORTANTE
+      this.problema.fotoPath = nativePath; // para compartilhar
+      this.problema.fotoUrl = webPath;     // para exibir
 
-    // Armazenar para exibir a foto no card
-    this.problema.fotoUrl = webPath;
+      console.log('Native:', nativePath);
+      console.log('Web:', webPath);
 
-    console.log('Foto salva em:', webPath);
-
-  } catch (error) {
-    console.error('Erro ao tirar/salvar foto:', error);
+    } catch (error) {
+      console.error('Erro ao tirar/salvar foto:', error);
+    }
   }
-}
 
 
   // Retorna o ícone baseado na situação
   getStatusIcon(): string {
     const icons: { [key: string]: string } = {
-      'pendente': 'time-outline',
-      'em_andamento': 'build-outline',
-      'concluido': 'checkmark-circle-outline'
+      pendente: 'time-outline',
+      em_andamento: 'build-outline',
+      concluido: 'checkmark-circle-outline',
     };
     return icons[this.problema.situacao] || 'help-outline';
   }
@@ -134,9 +135,9 @@ export class ModalOrdemComponent {
   // Retorna o label baseado na situação
   getStatusLabel(): string {
     const labels: { [key: string]: string } = {
-      'pendente': 'Pendente',
-      'em_andamento': 'Em Andamento',
-      'concluido': 'Concluído'
+      pendente: 'Pendente',
+      em_andamento: 'Em Andamento',
+      concluido: 'Concluído',
     };
     return labels[this.problema.situacao] || '';
   }
@@ -144,9 +145,9 @@ export class ModalOrdemComponent {
   // Retorna a descrição baseada na situação
   getStatusDescription(): string {
     const descriptions: { [key: string]: string } = {
-      'pendente': 'Problema aguardando início da execução',
-      'em_andamento': 'Problema sendo resolvido no momento',
-      'concluido': 'Problema já foi resolvido'
+      pendente: 'Problema aguardando início da execução',
+      em_andamento: 'Problema sendo resolvido no momento',
+      concluido: 'Problema já foi resolvido',
     };
     return descriptions[this.problema.situacao] || '';
   }
@@ -160,6 +161,4 @@ export class ModalOrdemComponent {
       console.log('Preencha os campos obrigatórios');
     }
   }
-
 }
-

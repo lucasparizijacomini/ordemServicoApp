@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,16 +19,31 @@ import {
   IonCardContent,
   IonButton,
   IonBadge,
-  AlertController
+  AlertController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addCircleOutline, alertCircleOutline, calendarOutline, cameraOutline, carSportOutline, checkmarkCircleOutline, clipboardOutline, close, constructOutline, saveOutline, trashOutline, warningOutline } from 'ionicons/icons';
+import {
+  addCircleOutline,
+  alertCircleOutline,
+  calendarOutline,
+  cameraOutline,
+  carSportOutline,
+  checkmarkCircleOutline,
+  clipboardOutline,
+  close,
+  constructOutline,
+  saveOutline,
+  trashOutline,
+  warningOutline,
+} from 'ionicons/icons';
 import { ModalOrdemComponent } from './modal-ordem/modal-ordem.component';
 import { OrdemServico } from 'src/app/models/ordem.inteface';
 import { OrdemDbService } from 'src/app/services/ordem-db.service';
+import { ICategoria } from 'src/app/models/categorias.interface';
+import { DbService } from 'src/app/services/db.service';
 
 @Component({
- selector: 'app-criar-ordem',
+  selector: 'app-criar-ordem',
   templateUrl: './cria-ordem.page.html',
   styleUrls: ['./cria-ordem.page.css'],
   standalone: true,
@@ -51,38 +66,48 @@ import { OrdemDbService } from 'src/app/services/ordem-db.service';
     IonBadge,
     IonButton,
   ],
-  providers: [ModalController]
+  providers: [ModalController],
 })
 export class CriaOrdemComponent {
-
   ordem!: OrdemServico;
+  categorias: ICategoria[] = [];
 
- constructor(
-  private router: Router,
-  private alertController: AlertController,
-  private modalCtrl: ModalController,
-  private ordemDb: OrdemDbService
-) {
-  addIcons({
-    'camera-outline': cameraOutline,
-    'checkmark-circle-outline': checkmarkCircleOutline,
-    'save-outline': saveOutline,
-    'close': close,
-    'car-sport-outline': carSportOutline,
-    'construct-outline': constructOutline,
-    'warning-outline': warningOutline,
-    'calendar-outline': calendarOutline,
-    'alert-circle-outline': alertCircleOutline,
-    'add-circle-outline': addCircleOutline,
-    'clipboard-outline': clipboardOutline,
-    'trash-outline': trashOutline
-  });
-  this.ordem = new OrdemServico();
-}
+  private dbService = inject(DbService)
+
+  constructor(
+    private router: Router,
+    private alertController: AlertController,
+    private modalCtrl: ModalController,
+    private ordemDb: OrdemDbService
+  ) {
+    addIcons({
+      'camera-outline': cameraOutline,
+      'checkmark-circle-outline': checkmarkCircleOutline,
+      'save-outline': saveOutline,
+      close: close,
+      'car-sport-outline': carSportOutline,
+      'construct-outline': constructOutline,
+      'warning-outline': warningOutline,
+      'calendar-outline': calendarOutline,
+      'alert-circle-outline': alertCircleOutline,
+      'add-circle-outline': addCircleOutline,
+      'clipboard-outline': clipboardOutline,
+      'trash-outline': trashOutline,
+    });
+    this.ordem = new OrdemServico();
+  }
+
+  ionViewWillEnter() {
+    this.carregarCategorias();
+  }
+
+  async carregarCategorias() {
+    this.categorias = await this.dbService.getAllCategorias();
+  }
 
   async openModalProblema() {
     const modal = await this.modalCtrl.create({
-      component: ModalOrdemComponent
+      component: ModalOrdemComponent,
     });
 
     await modal.present();
@@ -102,7 +127,7 @@ export class CriaOrdemComponent {
       const alert = await this.alertController.create({
         header: 'Campos obrigatórios',
         message: 'Preencha Modelo e Frota.',
-        buttons: ['OK']
+        buttons: ['OK'],
       });
       return alert.present();
     }
@@ -119,15 +144,15 @@ export class CriaOrdemComponent {
       buttons: [
         {
           text: 'OK',
-          handler: () => this.router.navigate(['/ordens'])
-        }
-      ]
+          handler: () => this.router.navigate(['/ordens']),
+        },
+      ],
     });
 
     await alert.present();
   }
 
- adicionarProblema() {
+  adicionarProblema() {
     if (!this.ordem.problemas) {
       this.ordem.problemas = [];
     }
@@ -138,12 +163,11 @@ export class CriaOrdemComponent {
       observacao: [],
       pecas: [],
       situacao: '',
-      fotoUrl: ''
+      fotoUrl: '',
     });
   }
 
   removerProblema(index: number) {
     this.ordem.problemas.splice(index, 1);
   }
-
 }

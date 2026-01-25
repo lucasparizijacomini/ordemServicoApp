@@ -16,7 +16,7 @@ import {
   IonCardTitle,
   IonBadge
 } from '@ionic/angular/standalone';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   downloadOutline,
@@ -55,7 +55,10 @@ export class HomeComponent  {
   totalAndamento: number;
   totalAguardandoExecucao: number;
 
-  constructor(private router: Router, private ordemDb: OrdemDbService) {
+  private router = inject(Router)
+  private ordemDb = inject(OrdemDbService)
+
+  constructor() {
     addIcons({
       'download-outline': downloadOutline,
       'construct-outline': constructOutline,
@@ -90,5 +93,9 @@ export class HomeComponent  {
 
   navegarParaOrdensFinalizadas(){
     this.router.navigate(['/ordens-finalizadas']);
+  }
+
+  navegarParaCadastros(){
+    this.router.navigate(['/cadastros'])
   }
 }

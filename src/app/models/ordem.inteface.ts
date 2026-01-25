@@ -11,6 +11,7 @@ export class OrdemServico implements IOrdemServico {
   fotoUrl?: string | undefined;
   operador: string;
   problemas: Problemas[];
+  categoriaId: string;
   status: "aguardando_execucao" | "em_execucao" | "concluida" | "pausada";
   dataInicio?: string | undefined;
   dataAbertura?: string | undefined;
@@ -26,6 +27,7 @@ export class OrdemServico implements IOrdemServico {
     this.operador = '';
     this.fotoUrl = '';
     this.status = 'aguardando_execucao';
+    this.categoriaId = '';
     this.problemas = [];
     this.dataAbertura = new Date().toISOString();
   }
@@ -40,6 +42,7 @@ export interface IOrdemServico {
   operador: string;
   local: string;
   tipoManutencao: string;
+  categoriaId: string;
   fotoUrl?: string;
   problemas: Problemas[];
   status: 'aguardando_execucao' | 'em_execucao' | 'concluida' | 'pausada';
@@ -56,6 +59,7 @@ export interface Problemas {
   pecas: IPeca[];
   concluido?: boolean;
   fotoUrl: string;
+  fotoPath?: string;
   horaConclusao?: string;
 }
 

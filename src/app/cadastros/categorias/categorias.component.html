@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Categorias</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="abrirModalNovaCategoria()">
+        <ion-icon slot="start" name="add"></ion-icon>
+        Nova
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+
+    @for (categoria of categorias; track categoria.id) {
+      <ion-item>
+        <ion-label>
+          <h2>{{ categoria.nome }}</h2>
+          <p>Status: {{ categoria.ativo ? 'Ativa' : 'Inativa' }}</p>
+        </ion-label>
+
+        <ion-toggle
+          slot="end"
+          [checked]="categoria.ativo"
+          (ionChange)="toggleStatus(categoria)">
+        </ion-toggle>
+
+        <ion-button
+          fill="clear"
+          color="medium"
+          (click)="editarCategoria(categoria)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button
+          fill="clear"
+          color="danger"
+          (click)="excluirCategoria(categoria)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    }
+
+  </ion-list>
+
+  @if (categorias.length === 0) {
+    <ion-text color="medium" class="ion-padding">
+      Nenhuma categoria cadastrada.
+    </ion-text>
+  }
+
+</ion-content>

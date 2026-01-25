@@ -10,13 +10,29 @@
 <ion-content [fullscreen]="true">
   <div class="container">
     <form>
-
       <!-- SEÇÃO: Informações do Veículo -->
       <div class="section-card">
         <div class="section-header">
           <ion-icon name="car-sport-outline"></ion-icon>
           <h2>Informações do Veículo</h2>
         </div>
+
+        <ion-item lines="none">
+          <ion-select
+            label="Categoria *"
+            labelPlacement="floating"
+            placeholder="Selecione"
+            [(ngModel)]="ordem.categoriaId"
+            name="categoriaId"
+            interface="popover"
+          >
+            @for (categoria of categorias; track categoria.id) {
+            <ion-select-option [value]="categoria.id">
+              {{ categoria.nome }}
+            </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
 
         <ion-item lines="full">
           <ion-input
@@ -25,7 +41,8 @@
             placeholder="Ex: 92UK"
             [(ngModel)]="ordem.modelo"
             name="modelo"
-            required>
+            required
+          >
           </ion-input>
         </ion-item>
 
@@ -37,7 +54,8 @@
             [(ngModel)]="ordem.frota"
             name="frota"
             type="number"
-            required>
+            required
+          >
           </ion-input>
         </ion-item>
 
@@ -49,7 +67,8 @@
             [(ngModel)]="ordem.hodometro"
             name="hodometro"
             type="number"
-            required>
+            required
+          >
           </ion-input>
         </ion-item>
 
@@ -60,7 +79,8 @@
             placeholder="Ex: Operador 1"
             [(ngModel)]="ordem.operador"
             name="operador"
-            required>
+            required
+          >
           </ion-input>
         </ion-item>
       </div>
@@ -79,7 +99,8 @@
             placeholder="Ex: Garagem A"
             [(ngModel)]="ordem.local"
             name="local"
-            required>
+            required
+          >
           </ion-input>
         </ion-item>
 
@@ -90,7 +111,8 @@
             placeholder="Selecione"
             [(ngModel)]="ordem.tipoManutencao"
             name="tipoManutencao"
-            interface="popover">
+            interface="popover"
+          >
             <ion-select-option value="1">
               <ion-icon name="warning-outline"></ion-icon> Corretiva
             </ion-select-option>
@@ -106,21 +128,27 @@
         <div class="section-header">
           <ion-icon name="alert-circle-outline"></ion-icon>
           <h2>Problemas Identificados</h2>
-          <ion-badge color="primary">{{ ordem.problemas.length || 0 }}</ion-badge>
+          <ion-badge color="primary"
+            >{{ ordem.problemas.length || 0 }}</ion-badge
+          >
         </div>
 
         <ion-button
           expand="block"
           fill="outline"
           (click)="openModalProblema()"
-          class="add-problema-btn">
+          class="add-problema-btn"
+        >
           <ion-icon slot="start" name="add-circle-outline"></ion-icon>
           Adicionar Problema
         </ion-button>
 
         <!-- Lista de Problemas -->
         <div class="problemas-list" *ngIf="ordem.problemas.length > 0">
-          <ion-card *ngFor="let p of ordem.problemas; let i = index" class="problema-card">
+          <ion-card
+            *ngFor="let p of ordem.problemas; let i = index"
+            class="problema-card"
+          >
             <ion-card-content>
               <div class="problema-header">
                 <div class="problema-tipo">
@@ -131,14 +159,21 @@
                   fill="clear"
                   color="danger"
                   size="small"
-                  (click)="removerProblema(i)">
+                  (click)="removerProblema(i)"
+                >
                   <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
                 </ion-button>
               </div>
 
               <div class="problema-info">
-                <p><ion-icon name="flag-outline"></ion-icon> <strong>Situação:</strong> {{ p.situacao }}</p>
-                <p *ngIf="p.observacao"><ion-icon name="document-text-outline"></ion-icon> <strong>Observação:</strong> {{ p.observacao }}</p>
+                <p>
+                  <ion-icon name="flag-outline"></ion-icon>
+                  <strong>Situação:</strong> {{ p.situacao }}
+                </p>
+                <p *ngIf="p.observacao">
+                  <ion-icon name="document-text-outline"></ion-icon>
+                  <strong>Observação:</strong> {{ p.observacao }}
+                </p>
               </div>
 
               <!-- MINIATURA DA IMAGEM -->
@@ -149,7 +184,10 @@
           </ion-card>
         </div>
 
-        <div class="empty-state" *ngIf="!ordem.problemas || ordem.problemas.length === 0">
+        <div
+          class="empty-state"
+          *ngIf="!ordem.problemas || ordem.problemas.length === 0"
+        >
           <ion-icon name="clipboard-outline"></ion-icon>
           <p>Nenhum problema adicionado</p>
         </div>
@@ -160,11 +198,11 @@
         expand="block"
         size="large"
         (click)="finalizarOS()"
-        class="finalizar-btn">
+        class="finalizar-btn"
+      >
         <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
         Abrir Ordem de Serviço
       </ion-button>
-
     </form>
   </div>
 </ion-content>

@@ -112,9 +112,21 @@
         </ion-button>
       </div>
 
+      <ion-segment value="pendente" (ionChange)="onFiltroSituacao($event.detail.value)">
+        <ion-segment-button  value="pendente">
+          <ion-label>Pendente</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="em_andamento">
+          <ion-label>Andamento</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="concluido">
+          <ion-label>Concluído</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
       <div class="problemas-list">
         <ion-card
-          *ngFor="let problema of ordem.problemas"
+          *ngFor="let problema of ordemFiltrada.problemas"
           class="problema-card"
           [class.concluido]="problema.concluido"
           [attr.data-status]="problema.situacao">
@@ -208,6 +220,18 @@
                 (click)="abrirModalPecas(problema)">
                 <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
                 Peças
+              </ion-button>
+
+            </div>
+
+            <div class="problema-actions">
+              <ion-button
+                size="small"
+                fill="clear"
+                [disabled]="!problema.fotoPath"
+                (click)="solicitar(problema)">
+                <ion-icon slot="start" name="arrow-undo-outline"></ion-icon>
+                Pedir
               </ion-button>
             </div>
           </ion-card-content>

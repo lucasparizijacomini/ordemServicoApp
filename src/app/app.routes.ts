@@ -1,3 +1,4 @@
+import { CadastrosComponent } from './cadastros/cadastros.component';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -24,6 +25,14 @@ export const routes: Routes = [
   {
     path: 'ordens-finalizadas',
     loadComponent: ()=> import('./ordens-finalizadas/ordens-finalizadas.page').then(c => c.OrdensFinalizadasPage)
+  },
+  {
+    path: 'cadastros',
+    loadComponent: ()=> import('./cadastros/cadastros.component').then(c => c.CadastrosComponent)
+  },
+  {
+    path: 'categorias',
+    loadComponent: () => import('./cadastros/categorias/categorias.component').then(c => c.CategoriasComponent)
   },
   {
     path: '',

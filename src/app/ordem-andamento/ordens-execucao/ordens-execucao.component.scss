@@ -137,6 +137,7 @@ ion-progress-bar {
 .problemas-list {
   display: flex;
   flex-direction: column;
+  margin-top: 1rem;
   gap: 12px;
 }
 
@@ -156,7 +157,9 @@ ion-progress-bar {
 }
 
 .problema-card[data-status="concluido"] {
-  border-left-color: var(--ion-color-success);
+  border: 2px solid var(--ion-color-success);
+  border-left-width: 2px;
+  background: var(--ion-color-success-tint);
 }
 
 .problema-card.concluido {
