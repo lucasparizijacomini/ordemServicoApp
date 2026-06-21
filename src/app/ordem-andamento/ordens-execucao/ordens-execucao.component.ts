@@ -48,6 +48,7 @@ import {
   timeOutline,
   trashOutline,
   arrowUndoOutline,
+  cube
 } from 'ionicons/icons';
 import {
   IPeca,
@@ -129,6 +130,7 @@ export class OrdensExecucaoComponent implements OnInit {
       'trash-outline': trashOutline,
       'chatbox-ellipses-outline': chatboxEllipsesOutline,
       'arrow-undo-outline': arrowUndoOutline,
+      'cube': cube
     });
   }
 
@@ -187,15 +189,18 @@ export class OrdensExecucaoComponent implements OnInit {
     await modal.present();
   }
 
-  async onFiltroSituacao(newTipo?: any) {
+  async togglePecaDisponivel(ev: Event, problema: Problemas) {
+    ev?.stopPropagation();
+    problema.pecaDisponivel = await this.ordemDbService.togglePecaDisponivel(this.osId, problema.id);
+  }
+
+  onFiltroSituacao(newTipo: any) {
     this.filtroTipo = newTipo;
-
-    this.ordem = await this.ordemDbService.getById(this.osId);
-    this.ordemFiltrada = await this.ordemDbService.getById(this.osId);
-
-    this.ordemFiltrada.problemas = this.ordemFiltrada.problemas.filter(
-      (problema) => problema.situacao === this.filtroTipo,
-    );
+    if (this.ordem && this.ordem.problemas) {
+      this.ordemFiltrada.problemas = this.ordem.problemas.filter(
+        (problema) => problema.situacao === this.filtroTipo
+      );
+    }
   }
 
   async carregarOS(id: number) {
@@ -207,6 +212,16 @@ export class OrdensExecucaoComponent implements OnInit {
       return;
     }
 
+    // Verifica se veio um problemId via query string
+    const problemId = Number(this.activatedRoute.snapshot.queryParamMap.get('problemId'));
+    if (problemId) {
+      const problema = this.ordem.problemas.find(p => p.id === problemId);
+      if (problema) {
+        // Ajusta o filtro para a situação do problema clicado
+        this.filtroTipo = problema.situacao;
+      }
+    }
+
     this.ordemFiltrada.problemas = this.ordem.problemas.filter(
       (problema) => problema.situacao === this.filtroTipo,
     );
@@ -216,7 +231,25 @@ export class OrdensExecucaoComponent implements OnInit {
       this.ordem.dataInicio = new Date().toLocaleTimeString('pt-BR');
       this.ordemDbService.update(this.ordem);
     }
+
     console.log('Carregando OS:', id);
+
+    // Se tiver problemId, rola para ele após o render
+    if (problemId) {
+      setTimeout(() => {
+        const el = document.getElementById(`problem-${problemId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Destaque visual temporário
+          el.style.transition = 'background-color 0.5s';
+          const originalBg = el.style.backgroundColor;
+          el.style.backgroundColor = 'rgba(var(--ion-color-primary-rgb), 0.1)';
+          setTimeout(() => {
+            el.style.backgroundColor = originalBg;
+          }, 2000);
+        }
+      }, 300);
+    }
   }
 
   // Mudar status com botão

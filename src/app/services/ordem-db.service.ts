@@ -151,6 +151,24 @@ export class OrdemDbService {
   }
 
   /**
+   * Alterna a disponibilidade de peça em um problema
+   */
+  async togglePecaDisponivel(osId: number, problemaId: number): Promise<boolean> {
+    await this.ready;
+    const ordem = await this.getById(osId);
+
+    if (ordem && ordem.problemas) {
+      const problema = ordem.problemas.find((p: any) => p.id === problemaId);
+      if (problema) {
+        problema.pecaDisponivel = !problema.pecaDisponivel;
+        await this.update(ordem);
+        return problema.pecaDisponivel;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Marca um problema como concluído
    */
   async concluirProblema(osId: number, problemaId: number): Promise<void> {
@@ -255,6 +273,9 @@ export class OrdemDbService {
     tipo?: string;
     search?: string;
     status?: string;
+    categoriaId?: string;
+    dataInicio?: string;
+    dataFim?: string;
   }): Promise<number> {
     await this.ready;
     const all = await this.db.getAll('ordens');
@@ -268,6 +289,9 @@ export class OrdemDbService {
     tipo?: string;
     search?: string;
     status?: string;
+    categoriaId?: string;
+    dataInicio?: string;
+    dataFim?: string;
   }): Promise<IOrdemServico[]> {
     await this.ready;
     const all = await this.db.getAll('ordens');
@@ -275,7 +299,10 @@ export class OrdemDbService {
       situacao: options.situacao,
       tipo: options.tipo,
       search: options.search,
-      status: options.status
+      status: options.status,
+      categoriaId: options.categoriaId,
+      dataInicio: options.dataInicio,
+      dataFim: options.dataFim
     });
 
     return filtered.slice(options.skip, options.skip + options.limit);
@@ -288,6 +315,9 @@ export class OrdemDbService {
       tipo?: string;
       search?: string;
       status?: string;
+      categoriaId?: string;
+      dataInicio?: string;
+      dataFim?: string;
     }
   ) {
     let arr = all;
@@ -300,13 +330,36 @@ export class OrdemDbService {
       arr = arr.filter(a => a.status === opts.status);
     }
 
+    if (opts?.categoriaId) {
+      arr = arr.filter(a => String(a.categoriaId) === String(opts.categoriaId));
+    }
+
+    if (opts?.dataInicio) {
+      const dtInicio = opts.dataInicio; // format YYYY-MM-DD
+      arr = arr.filter(a => {
+        if (!a.dataAbertura) return false;
+        const localDate = new Date(a.dataAbertura).toLocaleDateString('en-CA'); // Gets YYYY-MM-DD in local time
+        return localDate >= dtInicio;
+      });
+    }
+
+    if (opts?.dataFim) {
+      const dtFim = opts.dataFim; // format YYYY-MM-DD
+      arr = arr.filter(a => {
+        if (!a.dataAbertura) return false;
+        const localDate = new Date(a.dataAbertura).toLocaleDateString('en-CA');
+        return localDate <= dtFim;
+      });
+    }
+
     if (opts?.search && opts.search.trim() !== '') {
       const term = opts.search.toLowerCase();
       arr = arr.filter(o =>
         (o.modelo || '').toLowerCase().includes(term) ||
-        ((o.frota.toString() || '')).toLowerCase().includes(term) ||
+        ((o.frota?.toString() || '')).toLowerCase().includes(term) ||
         (o.local || '').toLowerCase().includes(term) ||
-        (o.operador || '').toLowerCase().includes(term)
+        (o.operador || '').toLowerCase().includes(term) ||
+        (o.mecanico || '').toLowerCase().includes(term)
       );
     }
 

@@ -151,18 +151,51 @@ export class PdfGeneratorService {
         doc.text(`${i + 1}. ${p.tipo || 'Problema'}`, 15, yPosition);
         yPosition += 7;
 
-        // Situação / Observação / Hora conclusão
+        // Situação / Hora conclusão
         doc.setFont('helvetica', 'normal');
         const situacao = p.situacao === 'em_andamento' ? 'Em Andamento' :
                         p.situacao === 'pendente' ? 'Pendente' : 'Concluído';
         doc.text(`Situação: ${situacao}`, 20, yPosition);
         yPosition += 7;
 
+        // Observações (Array ou String legada)
         if (p.observacao) {
-          // texto longo quebrado em linhas
-          const obsLines = doc.splitTextToSize(`Observação: ${p.observacao}`, pageWidth - 40);
-          doc.text(obsLines, 20, yPosition);
-          yPosition += obsLines.length * 7;
+          doc.setFont('helvetica', 'bold');
+          doc.text('Observações:', 20, yPosition);
+          yPosition += 6;
+          doc.setFont('helvetica', 'normal');
+
+          if (Array.isArray(p.observacao)) {
+            p.observacao.forEach((obs: any) => {
+              const text = typeof obs === 'string' ? obs : (obs.descricaoObservacao || '');
+              if (text) {
+                const obsLines = doc.splitTextToSize(`- ${text}`, pageWidth - 45);
+                doc.text(obsLines, 25, yPosition);
+                yPosition += obsLines.length * 6;
+              }
+            });
+          } else if (typeof p.observacao === 'string' && p.observacao.trim() !== '') {
+            const obsLines = doc.splitTextToSize(`- ${p.observacao}`, pageWidth - 45);
+            doc.text(obsLines, 25, yPosition);
+            yPosition += obsLines.length * 6;
+          }
+          yPosition += 2;
+        }
+
+        // Peças
+        if (p.pecas && Array.isArray(p.pecas) && p.pecas.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.text('Peças / Materiais:', 20, yPosition);
+          yPosition += 6;
+          doc.setFont('helvetica', 'normal');
+
+          p.pecas.forEach((peca: any) => {
+            const desc = peca.descricao || peca.pecaNome || 'S/D';
+            const qtd = peca.quantidade || 1;
+            doc.text(`- ${desc} (Qtd: ${qtd})`, 25, yPosition);
+            yPosition += 6;
+          });
+          yPosition += 2;
         }
 
         const hora = (p.concluido && p.horaConclusao) ? p.horaConclusao : '-';
@@ -170,7 +203,6 @@ export class PdfGeneratorService {
         yPosition += 8;
 
         // Se existir foto(s) no problema, carregar e inserir aqui
-        // suportamos um único campo p.fotoUrl (string) ou p.fotos (array)
         const fotos: string[] = [];
         if (p.fotoUrl) fotos.push(p.fotoUrl);
         if (Array.isArray(p.fotos)) fotos.push(...p.fotos);
@@ -178,7 +210,6 @@ export class PdfGeneratorService {
         for (const fotoUrl of fotos) {
           if (!fotoUrl) continue;
 
-          // tenta carregar base64 (se falhar, pula)
           let imgBase64: string | null = null;
           try {
             imgBase64 = await this.carregarImagemBase64(fotoUrl);
@@ -189,12 +220,9 @@ export class PdfGeneratorService {
 
           if (!imgBase64) continue;
 
-          // calcula dimensões mantendo proporção
-          // vamos usar máxima largura com margem e máximo de altura razoável
-          const maxWidth = pageWidth - 30; // margem 15px cada lado
+          const maxWidth = pageWidth - 30;
           const maxHeight = 160;
 
-          // cria img temporária para pegar dimensões reais
           const img = new Image();
           img.src = imgBase64;
           await new Promise<void>((res) => {
@@ -215,16 +243,17 @@ export class PdfGeneratorService {
             imgW = imgH * ratio;
           }
 
-          // quebra de página se não couber
           const pageHeightNow = doc.internal.pageSize.getHeight();
           if (yPosition + imgH > pageHeightNow - 30) {
             doc.addPage();
             yPosition = 20;
           }
 
-          // inserir imagem
+          // Centralização horizontal
+          const xPos = (pageWidth - imgW) / 2;
+
           try {
-            doc.addImage(imgBase64, 'JPEG', 15, yPosition, imgW, imgH, undefined, 'FAST');
+            doc.addImage(imgBase64, 'JPEG', xPos, yPosition, imgW, imgH, undefined, 'FAST');
             yPosition += imgH + 10;
           } catch (e) {
             console.warn('Erro ao inserir imagem no PDF:', e);
@@ -324,6 +353,7 @@ export class PdfGeneratorService {
     return d.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     });

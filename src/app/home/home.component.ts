@@ -22,10 +22,12 @@ import {
   downloadOutline,
   constructOutline,
   playCircleOutline,
-  createOutline
+  createOutline,
+  moonOutline,
+  sunnyOutline
 } from 'ionicons/icons';
 import { OrdemDbService } from '../services/ordem-db.service';
-import { NgIf } from '@angular/common';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-home',
@@ -35,11 +37,11 @@ import { NgIf } from '@angular/common';
   imports: [
     IonHeader,
     IonToolbar,
-    NgIf,
     IonTitle,
     IonContent,
     IonButtons,
     IonMenuButton,
+    IonButton,
     IonIcon,
     IonGrid,
     IonRow,
@@ -50,20 +52,23 @@ import { NgIf } from '@angular/common';
     IonBadge
   ]
 })
-export class HomeComponent  {
+export class HomeComponent {
 
   totalAndamento: number;
   totalAguardandoExecucao: number;
 
   private router = inject(Router)
   private ordemDb = inject(OrdemDbService)
+  public themeService = inject(ThemeService);
 
   constructor() {
     addIcons({
       'download-outline': downloadOutline,
       'construct-outline': constructOutline,
       'play-circle-outline': playCircleOutline,
-      'create-outline': createOutline
+      'create-outline': createOutline,
+      'moon-outline': moonOutline,
+      'sunny-outline': sunnyOutline
     });
     this.totalAndamento = 0;
     this.totalAguardandoExecucao = 0;
@@ -77,7 +82,7 @@ export class HomeComponent  {
     await this.loadedTotal();
   }
 
-  private async loadedTotal (){
+  private async loadedTotal() {
     this.totalAndamento = await this.ordemDb.countByStatus('em_execucao'); // 1 = Em andamento
     this.totalAguardandoExecucao = await this.ordemDb.countByStatus('aguardando_execucao')
   }
@@ -91,11 +96,15 @@ export class HomeComponent  {
     this.router.navigate(['/ordens-andamento']);
   }
 
-  navegarParaOrdensFinalizadas(){
+  navegarParaOrdensFinalizadas() {
     this.router.navigate(['/ordens-finalizadas']);
   }
 
-  navegarParaCadastros(){
+  navegarParaCadastros() {
     this.router.navigate(['/cadastros'])
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }

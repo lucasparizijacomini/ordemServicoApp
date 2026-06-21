@@ -21,6 +21,9 @@
           placeholder="Ex: Troca de óleo, Freio, Pneu..."
           [(ngModel)]="problema.tipo"
           name="tipo"
+          spellcheck="true"
+          autocomplete="on"
+          autocorrect="on"
           required>
         </ion-input>
       </ion-item>
@@ -33,10 +36,19 @@
         <h2>Registro Fotográfico</h2>
       </div>
 
+      <ion-item lines="none" class="toggle-item">
+        <ion-label>Editar foto após capturar</ion-label>
+        <ion-toggle [(ngModel)]="habilitarEdicao" name="habilitarEdicao" (ionChange)="toggleEdicao()"></ion-toggle>
+      </ion-item>
+
       <div class="foto-container" (click)="tirarFoto()">
         <div class="foto-placeholder" [class.has-photo]="problema.fotoUrl">
-          <ion-icon *ngIf="!problema.fotoUrl" name="camera-outline" size="large"></ion-icon>
-          <img *ngIf="problema.fotoUrl" [src]="problema.fotoUrl" alt="Foto do veículo">
+          @if (!problema.fotoUrl) {
+            <ion-icon name="camera-outline" size="large"></ion-icon>
+          }
+          @if (problema.fotoUrl) {
+            <img [src]="problema.fotoUrl" alt="Foto do veículo">
+          }
         </div>
         <p class="foto-hint">{{ problema.fotoUrl ? 'Toque para alterar' : 'Toque para adicionar foto' }}</p>
       </div>
@@ -79,17 +91,19 @@
       </div>
 
       <!-- Preview do Status -->
-      <ion-card class="status-preview" *ngIf="problema.situacao">
-        <ion-card-content>
-          <div class="preview-content" [attr.data-status]="problema.situacao">
-            <ion-icon [name]="getStatusIcon()"></ion-icon>
-            <div>
-              <strong>{{ getStatusLabel() }}</strong>
-              <p>{{ getStatusDescription() }}</p>
+      @if (problema.situacao) {
+        <ion-card class="status-preview">
+          <ion-card-content>
+            <div class="preview-content" [attr.data-status]="problema.situacao">
+              <ion-icon [name]="getStatusIcon()"></ion-icon>
+              <div>
+                <strong>{{ getStatusLabel() }}</strong>
+                <p>{{ getStatusDescription() }}</p>
+              </div>
             </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+          </ion-card-content>
+        </ion-card>
+      }
     </div>
 
     <!-- Botões de Ação -->

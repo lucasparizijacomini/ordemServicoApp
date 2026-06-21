@@ -138,6 +138,18 @@
   margin: 0;
 }
 
+/* Toggle */
+.toggle-item {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  --inner-padding-end: 0;
+  --background: transparent;
+  margin-top: -8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+}
+
 /* Responsividade */
 @media (max-width: 576px) {
   .status-buttons {

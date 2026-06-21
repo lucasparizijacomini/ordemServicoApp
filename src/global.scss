@@ -33,8 +33,41 @@
  */
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.class.css";
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
+
+.ion-palette-dark {
+  --ion-background-color: #000000;
+  --ion-background-color-rgb: 0, 0, 0;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
+  --ion-color-step-50: #0d0d0d;
+  --ion-color-step-100: #1a1a1a;
+  --ion-color-step-150: #262626;
+  --ion-color-step-200: #333333;
+  --ion-color-step-250: #404040;
+  --ion-color-step-300: #4d4d4d;
+  --ion-color-step-350: #595959;
+  --ion-color-step-400: #666666;
+  --ion-color-step-450: #737373;
+  --ion-color-step-500: #808080;
+  --ion-color-step-550: #8c8c8c;
+  --ion-color-step-600: #999999;
+  --ion-color-step-650: #a6a6a6;
+  --ion-color-step-700: #b3b3b3;
+  --ion-color-step-750: #bfbfbf;
+  --ion-color-step-800: #cccccc;
+  --ion-color-step-850: #d9d9d9;
+  --ion-color-step-900: #e6e6e6;
+  --ion-color-step-950: #f2f2f2;
+
+  --ion-item-background: #000000;
+  --ion-card-background: #121212;
+  --ion-toolbar-background: #000000;
+  --ion-tab-bar-background: #000000;
+}
 
 :root {
   --ion-safe-area-top: env(safe-area-inset-top);
@@ -46,4 +79,81 @@
 ion-content {
   --padding-top: var(--ion-safe-area-top);
   --padding-bottom: var(--ion-safe-area-bottom);
+}
+
+.clickable-photo {
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.clickable-photo:hover {
+  opacity: 0.7;
+}
+
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.img-wrapper {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--ion-color-step-200);
+}
+
+.img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.verified-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: white;
+  background: var(--ion-color-success);
+  font-size: 12px;
+  width: 16px;
+  height: 16px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.part-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 22px;
+  color: rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  padding: 2px;
+  transition: all 0.2s ease;
+  z-index: 3;
+}
+
+.part-badge.disponivel {
+  color: var(--ion-color-warning);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.ion-palette-dark .part-badge {
+  background: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.ion-palette-dark .part-badge.disponivel {
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--ion-color-warning);
 }

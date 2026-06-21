@@ -10,13 +10,13 @@ export class OrdemServico implements IOrdemServico {
   tipoManutencao: string;
   fotoUrl?: string | undefined;
   operador: string;
+  mecanico: string;
   problemas: Problemas[];
   categoriaId: string;
   status: "aguardando_execucao" | "em_execucao" | "concluida" | "pausada";
   dataInicio?: string | undefined;
   dataAbertura?: string | undefined;
   dataConclusao?: string | undefined;
-
 
   constructor(){
     this.modelo = '';
@@ -25,6 +25,7 @@ export class OrdemServico implements IOrdemServico {
     this.local = '';
     this.tipoManutencao = '1';
     this.operador = '';
+    this.mecanico = '';
     this.fotoUrl = '';
     this.status = 'aguardando_execucao';
     this.categoriaId = '';
@@ -43,6 +44,7 @@ export interface IOrdemServico {
   local: string;
   tipoManutencao: string;
   categoriaId: string;
+  mecanico: string;
   fotoUrl?: string;
   problemas: Problemas[];
   status: 'aguardando_execucao' | 'em_execucao' | 'concluida' | 'pausada';
@@ -58,6 +60,7 @@ export interface Problemas {
   observacao: IObservacoes[];
   pecas: IPeca[];
   concluido?: boolean;
+  pecaDisponivel?: boolean;
   fotoUrl: string;
   fotoPath?: string;
   horaConclusao?: string;

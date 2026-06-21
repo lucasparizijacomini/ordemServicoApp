@@ -1,11 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { OrdemServico } from '../models/ordem.inteface';
 import { OrdemDbService } from '../services/ordem-db.service';
 import { Router } from '@angular/router';
 
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonButton, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonButtons, IonLabel, IonSegment, IonSegmentButton, IonBackButton } from '@ionic/angular/standalone';
+import { 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, 
+  IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonButton, 
+  IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonButtons, 
+  IonLabel, IonSegment, IonSegmentButton, IonBackButton,
+  IonSelect, IonSelectOption, IonIcon, IonItem, IonInput
+} from '@ionic/angular/standalone';
 import { CommonModule, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { OrdemServico } from '../models/ordem.inteface';
+import { DbService } from '../services/db.service';
+import { ICategoria } from '../models/categorias.interface';
+import { addIcons } from 'ionicons';
+import { closeCircleOutline, checkmark, cube } from 'ionicons/icons';
 
 @Component({
   selector: 'app-ordem-andamento',
@@ -34,7 +44,12 @@ import { FormsModule } from '@angular/forms';
     IonSegment,
     IonSegmentButton,
     IonInfiniteScrollContent,
-    IonBackButton
+    IonBackButton,
+    IonSelect,
+    IonSelectOption,
+    IonIcon,
+    IonItem,
+    IonInput
 ]
 })
 export class OrdemAndamentoComponent  implements OnInit {
@@ -48,12 +63,27 @@ export class OrdemAndamentoComponent  implements OnInit {
   // filtros / busca
   searchTerm: string = '';
   filtroTipo: string | undefined; // '1' or '2' or undefined
+  filtroCategoria = '';
+  filtroDataInicio = '';
+  filtroDataFim = '';
 
-  totalCount = 0; // total de ordens que batem no filtro (para contador)
+  categorias: ICategoria[] = [];
+  totalCount = 0;
 
-  constructor(private ordemDb: OrdemDbService, private router: Router) {}
+  constructor(
+    private ordemDb: OrdemDbService, 
+    private router: Router,
+    private dbService: DbService
+  ) {
+    addIcons({
+      'close-circle-outline': closeCircleOutline,
+      'checkmark': checkmark,
+      'cube': cube
+    });
+  }
 
   async ngOnInit() {
+    this.categorias = await this.dbService.getAllCategorias();
     await this.resetAndLoad();
   }
 
@@ -74,7 +104,10 @@ export class OrdemAndamentoComponent  implements OnInit {
     this.totalCount = await this.ordemDb.countFiltered({
       status: 'em_execucao',
       tipo: this.filtroTipo,
-      search: this.searchTerm
+      search: this.searchTerm,
+      categoriaId: this.filtroCategoria,
+      dataInicio: this.filtroDataInicio,
+      dataFim: this.filtroDataFim
     });
   }
 
@@ -92,7 +125,10 @@ export class OrdemAndamentoComponent  implements OnInit {
       limit: this.pageSize,
       status: 'em_execucao',
       tipo: this.filtroTipo,
-      search: this.searchTerm
+      search: this.searchTerm,
+      categoriaId: this.filtroCategoria,
+      dataInicio: this.filtroDataInicio,
+      dataFim: this.filtroDataFim
     });
 
     // adicionar ao array
@@ -129,9 +165,27 @@ export class OrdemAndamentoComponent  implements OnInit {
     await this.resetAndLoad();
   }
 
-  executarOS(os: OrdemServico) {
+  async togglePecaDisponivel(ev: Event, os: OrdemServico, problemaId: number) {
+    ev.stopPropagation();
+    await this.ordemDb.togglePecaDisponivel(os.id!, problemaId);
+    const p = os.problemas.find((p: any) => p.id === problemaId);
+    if (p) p.pecaDisponivel = !p.pecaDisponivel;
+  }
+
+  executarOS(os: OrdemServico, problemId?: number) {
     // navegar para a página de execução (passa o id)
-    this.router.navigate(['/executar', os.id, false]);
+    this.router.navigate(['/executar', os.id, false], {
+      queryParams: problemId ? { problemId } : {}
+    });
+  }
+
+  async limparFiltros() {
+    this.searchTerm = '';
+    this.filtroTipo = undefined;
+    this.filtroCategoria = '';
+    this.filtroDataInicio = '';
+    this.filtroDataFim = '';
+    await this.resetAndLoad();
   }
 
 

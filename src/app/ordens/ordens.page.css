@@ -1,3 +1,41 @@
+.empty {
+  text-align: center;
+  margin-top: 50px;
+  color: #666;
+}
+
+.filters-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--ion-color-step-150);
+  flex-wrap: nowrap;
+}
+
+.filter-item {
+  flex: 1;
+  min-width: 0;
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: 44px;
+}
+
+.filter-item ion-label {
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  margin-bottom: 4px;
+}
+
+.filter-item ion-input,
+.filter-item ion-select {
+  font-size: 0.85rem;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
 .img-grid {
   display: flex;
   flex-wrap: wrap;
@@ -5,10 +43,37 @@
   margin-top: 8px;
 }
 
-.img-grid img {
+.img-wrapper {
+  position: relative;
   width: 80px;
   height: 80px;
-  object-fit: cover;
   border-radius: 6px;
+  overflow: hidden;
   border: 1px solid #ccc;
+}
+
+.img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.verified-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  color: #1a8a44; /* Verde mais escuro para o check */
+  background: rgba(144, 238, 144, 0.9); /* Verde claro (LightGreen) com leve transparência */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  border: 2px solid white;
+  pointer-events: none; /* Permite clicar na imagem por baixo */
 }

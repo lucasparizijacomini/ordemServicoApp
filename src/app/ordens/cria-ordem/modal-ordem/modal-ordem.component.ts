@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ActionSheetController } from '@ionic/angular/standalone';
 
 import {
   IonHeader,
@@ -19,6 +19,7 @@ import {
   IonCard,
   IonCardContent,
   IonLabel,
+  IonToggle,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -26,6 +27,7 @@ import {
   cameraOutline,
   close,
   flagOutline,
+  imageOutline,
   saveOutline,
   timeOutline,
 } from 'ionicons/icons';
@@ -52,9 +54,10 @@ import { PhotoEditor } from '@capawesome/capacitor-photo-editor';
     IonCard,
     IonCardContent,
     IonLabel,
+    IonToggle,
   ],
 })
-export class ModalOrdemComponent {
+export class ModalOrdemComponent implements OnInit {
   problema: Problemas = {
     id: 0,
     tipo: '',
@@ -64,15 +67,31 @@ export class ModalOrdemComponent {
     fotoUrl: '',
   };
 
-  constructor(private modalCtrl: ModalController) {
+  habilitarEdicao: boolean = true;
+
+  constructor(
+    private modalCtrl: ModalController,
+    private actionSheetCtrl: ActionSheetController
+  ) {
     addIcons({
       'flag-outline': flagOutline,
       'time-outline': timeOutline,
       'build-outline': buildOutline,
       close: close,
       'camera-outline': cameraOutline,
+      'image-outline': imageOutline,
       'save-outline': saveOutline,
     });
+  }
+
+  ngOnInit() {
+    // Carregar preferência salva
+    const saved = localStorage.getItem('habilitarEdicaoFoto');
+    this.habilitarEdicao = saved !== null ? saved === 'true' : true;
+  }
+
+  toggleEdicao() {
+    localStorage.setItem('habilitarEdicaoFoto', String(this.habilitarEdicao));
   }
 
   // Método para fechar o modal
@@ -86,12 +105,40 @@ export class ModalOrdemComponent {
   }
 
   async tirarFoto() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Selecionar Foto',
+      buttons: [
+        {
+          text: 'Câmera',
+          icon: 'camera-outline',
+          handler: () => {
+            this.capturePhoto(CameraSource.Camera);
+          }
+        },
+        {
+          text: 'Galeria',
+          icon: 'image-outline',
+          handler: () => {
+            this.capturePhoto(CameraSource.Photos);
+          }
+        },
+        {
+          text: 'Cancelar',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  async capturePhoto(source: CameraSource) {
     try {
       const image = await Camera.getPhoto({
         quality: 85,
         allowEditing: false,
         resultType: CameraResultType.Base64,
-        source: CameraSource.Camera,
+        source: source,
       });
 
       const fileName = `foto_os_${Date.now()}.jpeg`;
@@ -105,16 +152,31 @@ export class ModalOrdemComponent {
       const nativePath = savedFile.uri; // file://...
       const webPath = Capacitor.convertFileSrc(savedFile.uri);
 
-      await PhotoEditor.editPhoto({
-        path: nativePath,
-      });
+      // 🔴 MUITO IMPORTANTE: Se não for web E o editor estiver habilitado
+      if (Capacitor.getPlatform() !== 'web' && this.habilitarEdicao) {
+        try {
+          await PhotoEditor.editPhoto({
+             path: nativePath
+          });
+          
+          console.log('Editor concluído para:', nativePath);
+          
+          this.problema.fotoPath = nativePath;
+          // Adicionamos um timestamp para forçar o recarregamento da imagem
+          this.problema.fotoUrl = `${Capacitor.convertFileSrc(nativePath)}?t=${Date.now()}`;
+        } catch (editorError) {
+          console.warn('Editor cancelado ou erro:', editorError);
+          this.problema.fotoPath = nativePath;
+          this.problema.fotoUrl = webPath;
+        }
+      } else {
+        // Web: Mantém a original
+        this.problema.fotoPath = nativePath;
+        this.problema.fotoUrl = webPath;
+      }
 
-      // 🔴 MUITO IMPORTANTE
-      this.problema.fotoPath = nativePath; // para compartilhar
-      this.problema.fotoUrl = webPath;     // para exibir
-
-      console.log('Native:', nativePath);
-      console.log('Web:', webPath);
+      console.log('Final Native Path:', this.problema.fotoPath);
+      console.log('Final Web Path:', this.problema.fotoUrl);
 
     } catch (error) {
       console.error('Erro ao tirar/salvar foto:', error);

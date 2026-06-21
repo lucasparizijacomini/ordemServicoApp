@@ -26,6 +26,17 @@
         <ion-input type="number" [(ngModel)]="novaPeca.quantidade"></ion-input>
       </ion-item>
 
+      <ion-item>
+        <ion-label position="stacked">Unidade</ion-label>
+        <ion-select [(ngModel)]="novaPeca.unidade" placeholder="Sel. Unid.">
+          <ion-select-option value="un">un</ion-select-option>
+          <ion-select-option value="Litros">Litros</ion-select-option>
+          <ion-select-option value="KG">KG</ion-select-option>
+          <ion-select-option value="Gramas">Gramas</ion-select-option>
+          <ion-select-option value="Metros">Metros</ion-select-option>
+        </ion-select>
+      </ion-item>
+
       <ion-button expand="block" color="success" (click)="adicionarPeca()">
         Adicionar
       </ion-button>
@@ -54,14 +65,15 @@
           <tr>
             <th>Descrição</th>
             <th>Qtd</th>
+            <th>Unid.</th>
             <th></th>
           </tr>
         </thead>
-
         <tbody>
           <tr *ngFor="let p of pecas">
             <td>{{ p.descricao }}</td>
             <td>{{ p.quantidade }}</td>
+            <td>{{ p.unidade }}</td>
             <td>
               <ion-button color="danger" size="small" (click)="removerPeca(p)">
                 Remover

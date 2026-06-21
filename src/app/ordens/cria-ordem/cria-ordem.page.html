@@ -59,18 +59,20 @@
           </ion-input>
         </ion-item>
 
-        <ion-item lines="full">
-          <ion-input
-            label="Hodômetro (km) *"
-            labelPlacement="floating"
-            placeholder="Ex: 125.000"
-            [(ngModel)]="ordem.hodometro"
-            name="hodometro"
-            type="number"
-            required
-          >
-          </ion-input>
-        </ion-item>
+        @if (exibirHodometro) {
+          <ion-item lines="full">
+            <ion-input
+              label="Hodômetro (km) *"
+              labelPlacement="floating"
+              placeholder="Ex: 125.000"
+              [(ngModel)]="ordem.hodometro"
+              name="hodometro"
+              type="number"
+              required
+            >
+            </ion-input>
+          </ion-item>
+        }
 
         <ion-item lines="none">
           <ion-input
@@ -79,6 +81,18 @@
             placeholder="Ex: Operador 1"
             [(ngModel)]="ordem.operador"
             name="operador"
+            required
+          >
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-input
+            label="Executante / Mecânico"
+            labelPlacement="floating"
+            placeholder="Ex: João Silva"
+            [(ngModel)]="ordem.mecanico"
+            name="mecanico"
             required
           >
           </ion-input>
@@ -144,53 +158,55 @@
         </ion-button>
 
         <!-- Lista de Problemas -->
-        <div class="problemas-list" *ngIf="ordem.problemas.length > 0">
-          <ion-card
-            *ngFor="let p of ordem.problemas; let i = index"
-            class="problema-card"
-          >
-            <ion-card-content>
-              <div class="problema-header">
-                <div class="problema-tipo">
-                  <ion-icon name="build-outline"></ion-icon>
-                  <strong>{{ p.tipo }}</strong>
-                </div>
-                <ion-button
-                  fill="clear"
-                  color="danger"
-                  size="small"
-                  (click)="removerProblema(i)"
-                >
-                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-                </ion-button>
-              </div>
+        @if (ordem.problemas.length > 0) {
+          <div class="problemas-list">
+            @for (p of ordem.problemas; track p.id; let i = $index) {
+              <ion-card class="problema-card">
+                <ion-card-content>
+                  <div class="problema-header">
+                    <div class="problema-tipo">
+                      <ion-icon name="build-outline"></ion-icon>
+                      <strong>{{ p.tipo }}</strong>
+                    </div>
+                    <ion-button
+                      fill="clear"
+                      color="danger"
+                      size="small"
+                      (click)="removerProblema(i)"
+                    >
+                      <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                    </ion-button>
+                  </div>
 
-              <div class="problema-info">
-                <p>
-                  <ion-icon name="flag-outline"></ion-icon>
-                  <strong>Situação:</strong> {{ p.situacao }}
-                </p>
-                <p *ngIf="p.observacao">
-                  <ion-icon name="document-text-outline"></ion-icon>
-                  <strong>Observação:</strong> {{ p.observacao }}
-                </p>
-              </div>
+                  <div class="problema-info">
+                    <p>
+                      <ion-icon name="flag-outline"></ion-icon>
+                      <strong>Situação:</strong> {{ p.situacao }}
+                    </p>
+                    @if (p.observacao) {
+                      <p>
+                        <ion-icon name="document-text-outline"></ion-icon>
+                        <strong>Observação:</strong> {{ p.observacao }}
+                      </p>
+                    }
+                  </div>
 
-              <!-- MINIATURA DA IMAGEM -->
-              <div *ngIf="p.fotoUrl" class="problema-thumb">
-                <img [src]="p.fotoUrl" />
-              </div>
-            </ion-card-content>
-          </ion-card>
-        </div>
-
-        <div
-          class="empty-state"
-          *ngIf="!ordem.problemas || ordem.problemas.length === 0"
-        >
-          <ion-icon name="clipboard-outline"></ion-icon>
-          <p>Nenhum problema adicionado</p>
-        </div>
+                  <!-- MINIATURA DA IMAGEM -->
+                  @if (p.fotoUrl) {
+                    <div class="problema-thumb">
+                      <img [src]="p.fotoUrl" />
+                    </div>
+                  }
+                </ion-card-content>
+              </ion-card>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <ion-icon name="clipboard-outline"></ion-icon>
+            <p>Nenhum problema adicionado</p>
+          </div>
+        }
       </div>
 
       <!-- Botão de Finalizar -->

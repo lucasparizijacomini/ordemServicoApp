@@ -4,11 +4,14 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Início</ion-title>
-    <!-- <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleTheme()">
+        <ion-icon 
+          slot="icon-only" 
+          [name]="themeService.getThemeStatus() ? 'sunny-outline' : 'moon-outline'">
+        </ion-icon>
       </ion-button>
-    </ion-buttons> -->
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -29,12 +32,13 @@
             class="badge-card"
           >
             <!-- Badge -->
-            <ion-badge
-              *ngIf="totalAguardandoExecucao > 0"
-              color="danger"
-              class="badge"
-              >{{ totalAguardandoExecucao }}</ion-badge
-            >
+            @if (totalAguardandoExecucao > 0) {
+              <ion-badge
+                color="danger"
+                class="badge"
+                >{{ totalAguardandoExecucao }}</ion-badge
+              >
+            }
 
             <ion-card-content class="card-content">
               <ion-icon name="construct-outline" color="primary"></ion-icon>
@@ -50,12 +54,13 @@
             class="badge-card"
           >
             <!-- Badge -->
-            <ion-badge
-              *ngIf="totalAndamento > 0"
-              color="danger"
-              class="badge"
-              >{{ totalAndamento }}</ion-badge
-            >
+            @if (totalAndamento > 0) {
+              <ion-badge
+                color="danger"
+                class="badge"
+                >{{ totalAndamento }}</ion-badge
+              >
+            }
 
             <ion-card-content class="card-content">
               <ion-icon name="play-circle-outline" color="primary"></ion-icon>

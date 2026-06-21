@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 export interface IPeca {
   descricao: string;
   quantidade: number;
+  unidade?: string;
 }
 
 @Component({
@@ -22,7 +23,8 @@ export class ModalPecasComponent {
 
   novaPeca: IPeca = {
     descricao: '',
-    quantidade: 1
+    quantidade: 1,
+    unidade: 'un'
   };
 
   constructor(private modalCtrl: ModalController) {}
@@ -39,7 +41,7 @@ export class ModalPecasComponent {
     this.pecas.push({ ...this.novaPeca });
 
     // reset
-    this.novaPeca = { descricao: '', quantidade: 1 };
+    this.novaPeca = { descricao: '', quantidade: 1, unidade: 'un' };
   }
 
   removerPeca(peca: IPeca) {

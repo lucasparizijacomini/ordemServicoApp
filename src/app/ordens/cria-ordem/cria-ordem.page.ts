@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import {
   IonHeader,
   IonToolbar,
@@ -169,5 +169,13 @@ export class CriaOrdemComponent {
 
   removerProblema(index: number) {
     this.ordem.problemas.splice(index, 1);
+  }
+
+  get exibirHodometro(): boolean {
+    const categoria = this.categorias.find(c => c.id === Number(this.ordem.categoriaId));
+    if (categoria && categoria.nome.toLowerCase().includes('implemento')) {
+      return false;
+    }
+    return true;
   }
 }
